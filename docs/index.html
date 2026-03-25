@@ -8,602 +8,474 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0c0f14;
-    --bg-card: #13161d;
-    --bg-card-hover: #191d27;
-    --text: #e8e6e1;
-    --text-muted: #8a8780;
-    --accent: #e9b44c;
-    --accent2: #2a9d8f;
-    --accent3: #e76f51;
-    --border: rgba(255,255,255,0.06);
-    --glow: rgba(233,180,76,0.08);
+    --bg:#0c0f14;--bg-card:#13161d;--bg-card-hover:#191d27;
+    --text:#e8e6e1;--text-muted:#8a8780;
+    --accent:#e9b44c;--accent2:#2a9d8f;--accent3:#e76f51;
+    --border:rgba(255,255,255,0.06);--glow:rgba(233,180,76,0.08);
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+  body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.5}
+  .container{max-width:1080px;margin:0 auto;padding:0 32px}
 
-  /* ── Grain overlay ── */
-  body::after {
-    content: '';
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 9999; opacity: 0.5;
-  }
+  /* Hero */
+  .hero{padding:100px 0 80px;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,var(--glow) 0%,transparent 70%);pointer-events:none}
+  .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:100px;border:1px solid var(--border);background:var(--bg-card);font-size:13px;color:var(--accent);font-weight:500;letter-spacing:0.02em;margin-bottom:28px;animation:fadeUp .6s ease both}
+  .hero-badge span{color:var(--text-muted)}
+  h1{font-family:'DM Serif Display',serif;font-size:clamp(42px,6vw,72px);line-height:1.08;letter-spacing:-0.02em;margin-bottom:24px;animation:fadeUp .6s ease .1s both}
+  h1 em{font-style:normal;background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero-sub{font-size:18px;color:var(--text-muted);max-width:560px;line-height:1.7;margin-bottom:36px;animation:fadeUp .6s ease .2s both}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;animation:fadeUp .6s ease .3s both}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:10px;font-size:15px;font-weight:600;text-decoration:none;transition:all .2s;cursor:pointer;border:none;font-family:inherit}
+  .btn-primary{background:var(--accent);color:#0c0f14}
+  .btn-primary:hover{background:#d4a243;transform:translateY(-1px);box-shadow:0 8px 30px rgba(233,180,76,0.2)}
+  .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+  .btn-ghost:hover{border-color:rgba(255,255,255,0.15);background:var(--bg-card)}
 
-  /* ── Layout ── */
-  .container { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+  /* Sections */
+  .section{padding:80px 0}
+  .section-label{font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  h2{font-family:'DM Serif Display',serif;font-size:clamp(28px,4vw,40px);line-height:1.15;letter-spacing:-0.01em;margin-bottom:16px}
+  .section-desc{color:var(--text-muted);font-size:16px;max-width:520px;margin-bottom:48px}
 
-  /* ── Hero ── */
-  .hero {
-    padding: 100px 0 80px;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -200px; right: -200px;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 14px;
-    border-radius: 100px;
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    font-size: 13px;
-    color: var(--accent);
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    margin-bottom: 28px;
-    animation: fadeUp 0.6s ease both;
-  }
-  .hero-badge span { color: var(--text-muted); }
-  h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(42px, 6vw, 72px);
-    line-height: 1.08;
-    letter-spacing: -0.02em;
-    margin-bottom: 24px;
-    animation: fadeUp 0.6s ease 0.1s both;
-  }
-  h1 em {
-    font-style: normal;
-    background: linear-gradient(135deg, var(--accent), var(--accent3));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .hero-sub {
-    font-size: 18px;
-    color: var(--text-muted);
-    max-width: 560px;
-    line-height: 1.7;
-    margin-bottom: 36px;
-    animation: fadeUp 0.6s ease 0.2s both;
-  }
-  .hero-actions {
-    display: flex; gap: 14px; flex-wrap: wrap;
-    animation: fadeUp 0.6s ease 0.3s both;
-  }
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 13px 26px;
-    border-radius: 10px;
-    font-size: 15px; font-weight: 600;
-    text-decoration: none;
-    transition: all 0.2s;
-    cursor: pointer; border: none;
-  }
-  .btn-primary {
-    background: var(--accent);
-    color: #0c0f14;
-  }
-  .btn-primary:hover { background: #d4a243; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(233,180,76,0.2); }
-  .btn-ghost {
-    background: transparent;
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-  .btn-ghost:hover { border-color: rgba(255,255,255,0.15); background: var(--bg-card); }
+  /* Features */
+  .features{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+  .feature-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:28px 24px;transition:all .25s;overflow:hidden}
+  .feature-card:hover{background:var(--bg-card-hover);border-color:rgba(255,255,255,0.1);transform:translateY(-2px)}
+  .feature-icon{font-size:28px;margin-bottom:16px;display:block}
+  .feature-card h3{font-size:17px;font-weight:700;margin-bottom:8px}
+  .feature-card p{font-size:14px;color:var(--text-muted);line-height:1.6}
 
-  /* ── Section headers ── */
-  .section { padding: 80px 0; }
-  .section-label {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 12px;
-  }
-  h2 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(28px, 4vw, 40px);
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    margin-bottom: 16px;
-  }
-  .section-desc {
-    color: var(--text-muted);
-    font-size: 16px;
-    max-width: 520px;
-    margin-bottom: 48px;
-  }
+  /* Interactive demo */
+  .demo-wrapper{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:24px}
+  .demo-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+  .demo-title{font-size:14px;font-weight:700;color:var(--text)}
+  .demo-controls{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+  .demo-btn{height:28px;padding:0 10px;border:1px solid rgba(255,255,255,0.1);border-radius:6px;background:transparent;color:var(--text-muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;display:flex;align-items:center;justify-content:center}
+  .demo-btn:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+  .demo-btn.active{color:var(--accent);border-color:rgba(233,180,76,0.3);background:rgba(233,180,76,0.06)}
+  .demo-canvas{width:100%;height:460px;cursor:grab;overflow:hidden;position:relative}
+  .demo-canvas.dragging{cursor:grabbing}
+  .demo-hint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,255,255,0.3);background:rgba(0,0,0,0.4);padding:3px 12px;border-radius:20px;pointer-events:none;white-space:nowrap}
 
-  /* ── Feature grid ── */
-  .features {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 16px;
-  }
-  .feature-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 28px 24px;
-    transition: all 0.25s;
-    position: relative;
-    overflow: hidden;
-  }
-  .feature-card:hover {
-    background: var(--bg-card-hover);
-    border-color: rgba(255,255,255,0.1);
-    transform: translateY(-2px);
-  }
-  .feature-icon {
-    font-size: 28px;
-    margin-bottom: 16px;
-    display: block;
-  }
-  .feature-card h3 {
-    font-size: 17px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    letter-spacing: -0.01em;
-  }
-  .feature-card p {
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
+  /* Palette swatches */
+  .pal-row{display:flex;gap:6px}
+  .pal-btn{display:flex;gap:2px;padding:3px 5px;border-radius:6px;border:1px solid transparent;background:none;cursor:pointer;transition:all .15s}
+  .pal-btn:hover{border-color:rgba(255,255,255,0.1)}
+  .pal-btn.active{border-color:var(--accent);background:rgba(233,180,76,0.06)}
+  .pal-dot{width:7px;height:7px;border-radius:50%}
 
-  /* ── Example showcase ── */
-  .examples-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
-  }
-  .example-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    transition: all 0.25s;
-  }
-  .example-card:hover {
-    border-color: rgba(255,255,255,0.1);
-    transform: translateY(-3px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-  }
-  .example-preview {
-    height: 220px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .example-info {
-    padding: 20px 22px;
-    border-top: 1px solid var(--border);
-  }
-  .example-info h3 { font-size: 16px; margin-bottom: 6px; }
-  .example-info p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
-  .example-tags {
-    display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap;
-  }
-  .tag {
-    font-size: 11px; font-weight: 600;
-    padding: 3px 10px; border-radius: 100px;
-    background: rgba(255,255,255,0.05);
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-  }
-  .tag-accent { color: var(--accent); border-color: rgba(233,180,76,0.2); background: rgba(233,180,76,0.06); }
-  .tag-green { color: var(--accent2); border-color: rgba(42,157,143,0.2); background: rgba(42,157,143,0.06); }
+  /* Install */
+  .install-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;counter-reset:step}
+  .step-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:28px 24px;position:relative;counter-increment:step}
+  .step-card::before{content:counter(step);position:absolute;top:20px;right:20px;font-family:'DM Serif Display',serif;font-size:48px;color:rgba(255,255,255,0.04);line-height:1}
+  .step-card h3{font-size:15px;font-weight:700;margin-bottom:8px}
+  .step-card p{font-size:14px;color:var(--text-muted);line-height:1.6}
+  .step-card code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(255,255,255,0.05);padding:2px 7px;border-radius:5px;color:var(--accent)}
 
-  /* ── Mini mind map SVGs in example cards ── */
-  .mini-map { width: 100%; height: 100%; }
-  .mini-map circle { transition: r 0.3s; }
-  .example-card:hover .mini-map .pulse { animation: pulse 1.5s ease infinite; }
+  footer{padding:48px 0;border-top:1px solid var(--border);text-align:center;color:var(--text-muted);font-size:14px}
+  footer a{color:var(--accent);text-decoration:none}
+  footer a:hover{text-decoration:underline}
 
-  /* ── Install section ── */
-  .install-steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    counter-reset: step;
-  }
-  .step-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 28px 24px;
-    position: relative;
-    counter-increment: step;
-  }
-  .step-card::before {
-    content: counter(step);
-    position: absolute;
-    top: 20px; right: 20px;
-    font-family: 'DM Serif Display', serif;
-    font-size: 48px;
-    color: rgba(255,255,255,0.04);
-    line-height: 1;
-  }
-  .step-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
-  .step-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
-  .step-card code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    background: rgba(255,255,255,0.05);
-    padding: 2px 7px;
-    border-radius: 5px;
-    color: var(--accent);
-  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .reveal{opacity:0;transform:translateY(24px);transition:all .6s cubic-bezier(.22,1,.36,1)}
+  .reveal.visible{opacity:1;transform:translateY(0)}
 
-  /* ── Palette showcase ── */
-  .palette-row {
-    display: flex; gap: 24px; flex-wrap: wrap;
-    margin-top: 32px;
-  }
-  .palette-item {
-    display: flex; flex-direction: column; gap: 8px; align-items: center;
-  }
-  .palette-swatches {
-    display: flex; gap: 4px;
-  }
-  .swatch {
-    width: 28px; height: 28px; border-radius: 8px;
-    transition: transform 0.2s;
-  }
-  .swatch:hover { transform: scale(1.15); }
-  .palette-name {
-    font-size: 12px; color: var(--text-muted); font-weight: 500;
-  }
-
-  /* ── Footer ── */
-  footer {
-    padding: 48px 0;
-    border-top: 1px solid var(--border);
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 14px;
-  }
-  footer a { color: var(--accent); text-decoration: none; }
-  footer a:hover { text-decoration: underline; }
-
-  /* ── Animations ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.6; }
-    50% { opacity: 1; }
-  }
-  .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* ── Responsive ── */
-  @media (max-width: 640px) {
-    .container { padding: 0 20px; }
-    .hero { padding: 60px 0 48px; }
-    .section { padding: 48px 0; }
-    .features, .examples-grid, .install-steps { grid-template-columns: 1fr; }
+  @media(max-width:640px){
+    .container{padding:0 20px}.hero{padding:60px 0 48px}.section{padding:48px 0}
+    .features,.install-steps{grid-template-columns:1fr}.demo-canvas{height:340px}
   }
 </style>
 </head>
 <body>
 
-<!-- ════════════ HERO ════════════ -->
+<!-- HERO -->
 <section class="hero">
   <div class="container">
     <div class="hero-badge">🧠 Claude Skill <span>· Open Source</span></div>
     <h1>Turn anything into<br>an <em>intelligent</em> mind map</h1>
-    <p class="hero-sub">
-      A Claude skill that transforms documents, articles, brainstorms, and ideas into interactive mind maps with contradiction detection, gap analysis, source attribution, and 6 export formats.
-    </p>
+    <p class="hero-sub">A Claude skill that transforms documents, articles, brainstorms, and ideas into interactive mind maps with contradiction detection, gap analysis, source attribution, and 6 export formats.</p>
     <div class="hero-actions">
-      <a href="https://github.com/0x-man/mindmap-skill/releases/latest" class="btn btn-primary">
-        ↓ Download .skill file
-      </a>
-      <a href="https://github.com/0x-man/mindmap-skill" class="btn btn-ghost">
-        View on GitHub →
-      </a>
+      <a href="https://github.com/0x-man/mindmap-skill/releases/latest" class="btn btn-primary">↓ Download .skill file</a>
+      <a href="https://github.com/0x-man/mindmap-skill" class="btn btn-ghost">View on GitHub →</a>
     </div>
   </div>
 </section>
 
-<!-- ════════════ EXAMPLES ════════════ -->
+<!-- INTERACTIVE DEMOS -->
 <section class="section">
   <div class="container">
-    <div class="section-label reveal">Examples</div>
-    <h2 class="reveal">Built from real content</h2>
-    <p class="section-desc reveal">Each map was generated from a single prompt. Hover for details.</p>
+    <div class="section-label reveal">Live Examples</div>
+    <h2 class="reveal">Try it — these are interactive</h2>
+    <p class="section-desc reveal">Pan, zoom, click branches to collapse, switch palettes. Built from real content.</p>
 
-    <div class="examples-grid">
-      <!-- Example 1: Grayscale -->
-      <div class="example-card reveal">
-        <div class="example-preview" style="background: linear-gradient(135deg, #0d1b2a 0%, #1b2838 100%);">
-          <svg class="mini-map" viewBox="0 0 400 260">
-            <circle cx="200" cy="130" r="22" fill="#0d1b2a" stroke="#2a3a4a" stroke-width="1"/>
-            <text x="200" y="134" text-anchor="middle" fill="#fff" font-size="8" font-weight="700" font-family="DM Sans,sans-serif">Macro Case</text>
-            <g opacity="0.7">
-              <line x1="200" y1="130" x2="85" y2="60" stroke="#D64045" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="320" y2="55" stroke="#1D3557" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="340" y2="145" stroke="#E9B44C" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="310" y2="220" stroke="#2D6A4F" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="105" y2="210" stroke="#457B9D" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="60" y2="145" stroke="#7B2D8E" stroke-width="1.5" opacity="0.4"/>
-            </g>
-            <circle cx="85" cy="60" r="14" fill="#D64045" opacity="0.9"/><text x="85" y="63" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🏦 Fiat</text>
-            <circle cx="320" cy="55" r="14" fill="#1D3557" opacity="0.9"/><text x="320" y="58" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">💰 Debt</text>
-            <circle cx="340" cy="145" r="14" fill="#E9B44C" opacity="0.9"/><text x="340" y="148" text-anchor="middle" fill="#1a1a2e" font-size="6" font-family="DM Sans">📈 Yields</text>
-            <circle cx="310" cy="220" r="14" fill="#2D6A4F" opacity="0.9"/><text x="310" y="223" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🔮 Paths</text>
-            <circle cx="105" cy="210" r="14" fill="#457B9D" opacity="0.9"/><text x="105" y="213" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🛡️ Crypto</text>
-            <circle cx="60" cy="145" r="14" fill="#7B2D8E" opacity="0.9"/><text x="60" y="148" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">⚠️ Risks</text>
-            <path d="M 85 74 Q 140 110 170 116" fill="none" stroke="#D64045" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.5"/>
-          </svg>
-        </div>
-        <div class="example-info">
-          <h3>The Macro Case for Crypto</h3>
-          <p>14-page Grayscale research report compressed into 6 branches with contradiction detection and 3 inquiry nodes.</p>
-          <div class="example-tags">
-            <span class="tag tag-accent">PDF input</span>
-            <span class="tag">⚡ Contradictions</span>
-            <span class="tag">❓ Gaps</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Example 2: Deep Work -->
-      <div class="example-card reveal">
-        <div class="example-preview" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
-          <svg class="mini-map" viewBox="0 0 400 260">
-            <circle cx="200" cy="130" r="22" fill="#1a1a2e" stroke="#2a3a4a" stroke-width="1"/>
-            <text x="200" y="134" text-anchor="middle" fill="#fff" font-size="9" font-weight="700" font-family="DM Sans,sans-serif">Deep Work</text>
-            <g opacity="0.7">
-              <line x1="200" y1="130" x2="75" y2="55" stroke="#E76F51" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="310" y2="45" stroke="#2A9D8F" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="350" y2="130" stroke="#264653" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="310" y2="220" stroke="#E9C46A" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="100" y2="220" stroke="#F4A261" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="50" y2="140" stroke="#287271" stroke-width="1.5" opacity="0.4"/>
-            </g>
-            <circle cx="75" cy="55" r="13" fill="#E76F51" opacity="0.9"/><text x="75" y="58" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🧠 Thesis</text>
-            <circle cx="310" cy="45" r="13" fill="#2A9D8F" opacity="0.9"/><text x="310" y="48" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">⚡ Value</text>
-            <circle cx="350" cy="130" r="13" fill="#264653" opacity="0.9"/><text x="350" y="133" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🚧 Enemies</text>
-            <circle cx="310" cy="220" r="13" fill="#E9C46A" opacity="0.9"/><text x="310" y="223" text-anchor="middle" fill="#1a1a2e" font-size="6" font-family="DM Sans">📅 Modes</text>
-            <circle cx="100" cy="220" r="13" fill="#F4A261" opacity="0.9"/><text x="100" y="223" text-anchor="middle" fill="#1a1a2e" font-size="6" font-family="DM Sans">🏋️ Train</text>
-            <circle cx="50" cy="140" r="13" fill="#287271" opacity="0.9"/><text x="50" y="143" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🎯 4DX</text>
-          </svg>
-        </div>
-        <div class="example-info">
-          <h3>Deep Work — Cal Newport</h3>
-          <p>5,000+ words from 10 sources synthesized with frequency weighting and cross-branch links.</p>
-          <div class="example-tags">
-            <span class="tag tag-green">Multi-source</span>
-            <span class="tag">Weighted nodes</span>
-            <span class="tag">Cross-links</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Example 3: Cybersecurity -->
-      <div class="example-card reveal">
-        <div class="example-preview" style="background: linear-gradient(135deg, #0f1923 0%, #1a2332 100%);">
-          <svg class="mini-map" viewBox="0 0 400 260">
-            <circle cx="200" cy="130" r="22" fill="#1a1a2e" stroke="#2a3a4a" stroke-width="1"/>
-            <text x="200" y="128" text-anchor="middle" fill="#fff" font-size="7" font-weight="700" font-family="DM Sans,sans-serif">Cybersecurity</text>
-            <text x="200" y="139" text-anchor="middle" fill="#fff" font-size="7" font-weight="700" font-family="DM Sans,sans-serif">Fundamentals</text>
-            <g opacity="0.7">
-              <line x1="200" y1="130" x2="80" y2="50" stroke="#5B8C5A" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="320" y2="50" stroke="#4A6FA5" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="355" y2="145" stroke="#C17C74" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="310" y2="225" stroke="#7B6D8D" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="95" y2="220" stroke="#D4A574" stroke-width="1.5" opacity="0.4"/>
-              <line x1="200" y1="130" x2="45" y2="145" stroke="#4D8B8B" stroke-width="1.5" opacity="0.4"/>
-            </g>
-            <circle cx="80" cy="50" r="13" fill="#5B8C5A" opacity="0.9"/><text x="80" y="53" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🛡️ Network</text>
-            <circle cx="320" cy="50" r="13" fill="#4A6FA5" opacity="0.9"/><text x="320" y="53" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🔐 Crypto</text>
-            <circle cx="355" cy="145" r="13" fill="#C17C74" opacity="0.9"/><text x="355" y="148" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🧠 Social</text>
-            <circle cx="310" cy="225" r="13" fill="#7B6D8D" opacity="0.9"/><text x="310" y="228" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">⚙️ AppSec</text>
-            <circle cx="95" cy="220" r="13" fill="#D4A574" opacity="0.9"/><text x="95" y="223" text-anchor="middle" fill="#1a1a2e" font-size="6" font-family="DM Sans">📋 GRC</text>
-            <circle cx="45" cy="145" r="13" fill="#4D8B8B" opacity="0.9"/><text x="45" y="148" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🔍 Detect</text>
-          </svg>
-        </div>
-        <div class="example-info">
-          <h3>Cybersecurity Fundamentals</h3>
-          <p>Broad topic generated from Claude's knowledge — no source material needed.</p>
-          <div class="example-tags">
-            <span class="tag">Topic input</span>
-            <span class="tag">6 branches</span>
-            <span class="tag">3 levels deep</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="demo1" class="demo-wrapper reveal"></div>
+    <div id="demo2" class="demo-wrapper reveal"></div>
   </div>
 </section>
 
-<!-- ════════════ FEATURES ════════════ -->
-<section class="section" style="background: linear-gradient(180deg, transparent, rgba(233,180,76,0.02), transparent);">
+<!-- FEATURES -->
+<section class="section" style="background:linear-gradient(180deg,transparent,rgba(233,180,76,0.02),transparent)">
   <div class="container">
     <div class="section-label reveal">Features</div>
     <h2 class="reveal">Not just a pretty diagram</h2>
-    <p class="section-desc reveal">Content intelligence that surfaces what's interesting — contradictions, gaps, consensus, and hidden connections.</p>
-
+    <p class="section-desc reveal">Content intelligence that surfaces contradictions, gaps, consensus, and hidden connections.</p>
     <div class="features">
-      <div class="feature-card reveal">
-        <span class="feature-icon">⚡</span>
-        <h3>Contradiction Detection</h3>
-        <p>When sources disagree on a claim, both nodes get flagged and connected with a red dashed arc. You see the tension, not a false consensus.</p>
-      </div>
-      <div class="feature-card reveal">
-        <span class="feature-icon">❓</span>
-        <h3>Gap Analysis</h3>
-        <p>Structurally important areas with thin evidence get inquiry nodes — dashed borders that signal "this is a question, not an assertion."</p>
-      </div>
-      <div class="feature-card reveal">
-        <span class="feature-icon">⤸</span>
-        <h3>Cross-Branch Links</h3>
-        <p>Dotted arcs connect ideas across branches when they have non-obvious relationships. Labeled with verbs like "enables" or "blocks."</p>
-      </div>
-      <div class="feature-card reveal">
-        <span class="feature-icon">◎</span>
-        <h3>Focus Mode</h3>
-        <p>Click any branch to isolate it — everything else fades to 8%. Navigate dense maps without needing separate pages.</p>
-      </div>
-      <div class="feature-card reveal">
-        <span class="feature-icon">⊕</span>
-        <h3>Progressive Disclosure</h3>
-        <p>Toggle between keyword-only map view and full detail reading mode. One artifact, two uses.</p>
-      </div>
-      <div class="feature-card reveal">
-        <span class="feature-icon">🔗</span>
-        <h3>Source Attribution</h3>
-        <p>Nodes traced to their source with hover links and a footer reference list. No fabricated citations — ever.</p>
-      </div>
-      <div class="feature-card reveal">
-        <span class="feature-icon">🎨</span>
-        <h3>4 Color Palettes</h3>
-        <p>Switch between Bauhaus, Ocean Sunset, Nordic Forest, and Pastel Garden at runtime. Exports use the active palette.</p>
-      </div>
-      <div class="feature-card reveal">
-        <span class="feature-icon">↓</span>
-        <h3>6 Export Formats</h3>
-        <p>SVG, PNG (2× retina), PDF (native vector), Markdown, and Mermaid. Portable font stack that renders everywhere.</p>
-      </div>
-      <div class="feature-card reveal">
-        <span class="feature-icon">🧲</span>
-        <h3>Semantic Gravity</h3>
-        <p>Related branches sit adjacent on the circle. Physical proximity encodes conceptual relatedness — space becomes meaning.</p>
-      </div>
+      <div class="feature-card reveal"><span class="feature-icon">⚡</span><h3>Contradiction Detection</h3><p>When sources disagree, both nodes get flagged and connected with a red dashed arc.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">❓</span><h3>Gap Analysis</h3><p>Thin evidence areas get inquiry nodes — dashed borders signaling questions, not assertions.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">⤸</span><h3>Cross-Branch Links</h3><p>Dotted arcs connect ideas across branches with relationship labels like "enables" or "blocks."</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">◎</span><h3>Focus Mode</h3><p>Isolate any branch — everything else fades to 8%. Navigate dense maps effortlessly.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">⊕</span><h3>Progressive Disclosure</h3><p>Toggle between keyword-only map view and full detail reading mode.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">🔗</span><h3>Source Attribution</h3><p>Nodes traced to their origin with hover links and a footer reference list.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">🎨</span><h3>4 Color Palettes</h3><p>Bauhaus, Ocean Sunset, Nordic Forest, Pastel Garden — switchable at runtime.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">↓</span><h3>6 Export Formats</h3><p>SVG, PNG (retina), PDF (vector), Markdown, and Mermaid.js.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">🧲</span><h3>Semantic Gravity</h3><p>Related branches sit adjacent. Physical proximity encodes conceptual relatedness.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ════════════ PALETTES ════════════ -->
-<section class="section">
-  <div class="container">
-    <div class="section-label reveal">Palettes</div>
-    <h2 class="reveal">Pick the mood</h2>
-    <p class="section-desc reveal">Each palette is designed for a different tone. Switch at runtime — the map recolors instantly.</p>
-    <div class="palette-row reveal">
-      <div class="palette-item">
-        <div class="palette-swatches">
-          <div class="swatch" style="background:#D64045"></div>
-          <div class="swatch" style="background:#1D3557"></div>
-          <div class="swatch" style="background:#E9B44C"></div>
-          <div class="swatch" style="background:#2D6A4F"></div>
-          <div class="swatch" style="background:#7B2D8E"></div>
-          <div class="swatch" style="background:#E07A5F"></div>
-        </div>
-        <span class="palette-name">Bauhaus</span>
-      </div>
-      <div class="palette-item">
-        <div class="palette-swatches">
-          <div class="swatch" style="background:#E76F51"></div>
-          <div class="swatch" style="background:#2A9D8F"></div>
-          <div class="swatch" style="background:#E9C46A"></div>
-          <div class="swatch" style="background:#264653"></div>
-          <div class="swatch" style="background:#F4A261"></div>
-          <div class="swatch" style="background:#287271"></div>
-        </div>
-        <span class="palette-name">Ocean Sunset</span>
-      </div>
-      <div class="palette-item">
-        <div class="palette-swatches">
-          <div class="swatch" style="background:#5B8C5A"></div>
-          <div class="swatch" style="background:#4A6FA5"></div>
-          <div class="swatch" style="background:#C17C74"></div>
-          <div class="swatch" style="background:#7B6D8D"></div>
-          <div class="swatch" style="background:#D4A574"></div>
-          <div class="swatch" style="background:#4D8B8B"></div>
-        </div>
-        <span class="palette-name">Nordic Forest</span>
-      </div>
-      <div class="palette-item">
-        <div class="palette-swatches">
-          <div class="swatch" style="background:#7EB8DA"></div>
-          <div class="swatch" style="background:#B5C99A"></div>
-          <div class="swatch" style="background:#E8A87C"></div>
-          <div class="swatch" style="background:#9B8EC1"></div>
-          <div class="swatch" style="background:#F2CC8F"></div>
-          <div class="swatch" style="background:#81B29A"></div>
-        </div>
-        <span class="palette-name">Pastel Garden</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════ INSTALL ════════════ -->
-<section class="section" style="background: linear-gradient(180deg, transparent, rgba(42,157,143,0.02), transparent);">
+<!-- INSTALL -->
+<section class="section" style="background:linear-gradient(180deg,transparent,rgba(42,157,143,0.02),transparent)">
   <div class="container">
     <div class="section-label reveal">Install</div>
-    <h2 class="reveal">Up and running in 30 seconds</h2>
-    <p class="section-desc reveal">No terminal needed.</p>
-
+    <h2 class="reveal">30 seconds to your first map</h2>
     <div class="install-steps">
-      <div class="step-card reveal">
-        <h3>Download</h3>
-        <p>Grab <code>mindmap.skill</code> from the <a href="https://github.com/0x-man/mindmap-skill/releases/latest" style="color:var(--accent)">latest release</a>.</p>
-      </div>
-      <div class="step-card reveal">
-        <h3>Install</h3>
-        <p>Drag the file into any Claude chat. Or go to <strong>Settings → Profile → Custom Skills</strong> and upload it.</p>
-      </div>
-      <div class="step-card reveal">
-        <h3>Use</h3>
-        <p>Ask Claude to <em>"mind map this"</em> with any content — pasted text, an uploaded PDF, or just a topic.</p>
-      </div>
+      <div class="step-card reveal"><h3>Download</h3><p>Grab <code>mindmap.skill</code> from the <a href="https://github.com/0x-man/mindmap-skill/releases/latest" style="color:var(--accent)">latest release</a>.</p></div>
+      <div class="step-card reveal"><h3>Install</h3><p>Drag it into any Claude chat, or go to <strong>Settings → Profile → Custom Skills</strong>.</p></div>
+      <div class="step-card reveal"><h3>Use</h3><p>Say <em>"mind map this"</em> with any content — pasted text, a PDF, or just a topic.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ════════════ FOOTER ════════════ -->
-<footer>
-  <div class="container">
-    <p>Built with Claude · <a href="https://github.com/0x-man/mindmap-skill">GitHub</a> · MIT License</p>
-  </div>
-</footer>
+<footer><div class="container"><p>Built with Claude · <a href="https://github.com/0x-man/mindmap-skill">GitHub</a> · MIT License</p></div></footer>
 
-<!-- ════════════ SCROLL REVEAL ════════════ -->
+<!-- ════════════ INTERACTIVE MIND MAP ENGINE (vanilla JS) ════════════ -->
 <script>
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-</script>
+const PALETTES = {
+  "Bauhaus":       ["#D64045","#1D3557","#E9B44C","#2D6A4F","#7B2D8E","#E07A5F","#457B9D"],
+  "Ocean Sunset":  ["#E76F51","#2A9D8F","#E9C46A","#264653","#F4A261","#287271","#BC4749"],
+  "Nordic Forest": ["#5B8C5A","#4A6FA5","#C17C74","#7B6D8D","#D4A574","#4D8B8B","#8B6F47"],
+  "Pastel Garden": ["#7EB8DA","#B5C99A","#E8A87C","#9B8EC1","#F2CC8F","#81B29A","#E07A5F"],
+};
+const PNAMES = Object.keys(PALETTES);
 
+function lighten(hex, a=0.35){const n=parseInt(hex.slice(1),16);return`rgb(${Math.min(255,((n>>16)&255)+Math.round(255*a))},${Math.min(255,((n>>8)&255)+Math.round(255*a))},${Math.min(255,(n&255)+Math.round(255*a))})`}
+
+function buildLayout(data){
+  const nodes=[],edges=[],cx=500,cy=300;
+  nodes.push({id:"root",label:data.central,x:cx,y:cy,depth:0,childIds:[],collapsed:false,bi:-1,type:null,detail:null});
+  const sorted=data.branches.map((b,i)=>({...b,oi:i}));
+  sorted.sort((a,b)=>(a.group??99)-(b.group??99));
+  let groups=[],lg=null;sorted.forEach((b,i)=>{if(b.group!==lg){groups.push(i);lg=b.group}});
+  const ge=0.14,tg=(groups.length-1)*ge,bs=(2*Math.PI-tg)/sorted.length;
+  let ang=-Math.PI/2;
+  sorted.forEach((branch,i)=>{
+    if(i>0&&groups.includes(i))ang+=ge;
+    const ba=ang+(i*0.04-0.06),bx=cx+Math.cos(ba)*210,by=cy+Math.sin(ba)*210;
+    const bId=`b-${branch.oi}`;
+    nodes.push({id:bId,label:branch.label,x:bx,y:by,depth:1,childIds:[],collapsed:false,bi:branch.oi,type:null,detail:branch.detail||null});
+    nodes[0].childIds.push(bId);
+    edges.push({from:"root",to:bId,depth:1,bi:branch.oi});
+    (branch.children||[]).forEach((ch,j)=>{
+      const cc=branch.children.length,sp=Math.PI*(cc>4?.65:.52),sa=ba-sp/2;
+      const ca=cc===1?ba:sa+(j/(cc-1))*sp;
+      const sx=bx+Math.cos(ca)*120,sy=by+Math.sin(ca)*120,cId=`s-${branch.oi}-${j}`;
+      nodes.push({id:cId,label:ch.label,x:sx,y:sy,depth:2,childIds:[],collapsed:false,bi:branch.oi,type:ch.type||null,detail:ch.detail||null});
+      nodes.find(n=>n.id===bId).childIds.push(cId);
+      edges.push({from:bId,to:cId,depth:2,bi:branch.oi});
+    });
+    ang+=bs;
+  });
+  return{nodes,edges};
+}
+
+function createDemo(containerId, data, defaultPal){
+  const container=document.getElementById(containerId);
+  const layout=buildLayout(data);
+  let pal=PALETTES[defaultPal];
+  let palName=defaultPal;
+  let tx=0,ty=0,sc=1,dragging=false,dx=0,dy=0;
+  let collapsed=new Set();
+  let hovered=null;
+
+  // Build DOM
+  const header=document.createElement('div');header.className='demo-header';
+  const title=document.createElement('span');title.className='demo-title';title.textContent=data.central;
+  const controls=document.createElement('div');controls.className='demo-controls';
+
+  // Zoom buttons
+  ['−','⊡','+'].forEach(lbl=>{
+    const b=document.createElement('button');b.className='demo-btn';b.textContent=lbl;b.style.width='28px';
+    b.onclick=()=>{
+      if(lbl==='−')sc=Math.max(0.3,sc/1.2);
+      else if(lbl==='+')sc=Math.min(3,sc*1.2);
+      else{sc=1;tx=0;ty=0}
+      render();
+    };
+    controls.appendChild(b);
+  });
+
+  // Palette picker
+  const palDiv=document.createElement('div');palDiv.style.cssText='display:flex;gap:4px;margin-left:6px';
+  PNAMES.forEach(name=>{
+    const btn=document.createElement('button');
+    btn.className='pal-btn'+(name===palName?' active':'');
+    btn.title=name;
+    PALETTES[name].slice(0,5).forEach(c=>{
+      const d=document.createElement('div');d.className='pal-dot';d.style.background=c;btn.appendChild(d);
+    });
+    btn.onclick=()=>{
+      pal=PALETTES[name];palName=name;
+      palDiv.querySelectorAll('.pal-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    };
+    palDiv.appendChild(btn);
+  });
+  controls.appendChild(palDiv);
+
+  header.appendChild(title);header.appendChild(controls);
+  container.appendChild(header);
+
+  const canvasDiv=document.createElement('div');canvasDiv.className='demo-canvas';
+  container.appendChild(canvasDiv);
+
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 1000 600');
+  svg.style.cssText='width:100%;height:100%';
+  canvasDiv.appendChild(svg);
+
+  const hint=document.createElement('div');hint.className='demo-hint';
+  hint.textContent='Scroll to zoom · Drag to pan · Click branches to collapse';
+  canvasDiv.appendChild(hint);
+
+  // Tooltip
+  const tip=document.createElement('div');
+  tip.style.cssText='position:absolute;top:12px;left:12px;max-width:260px;background:rgba(19,22,29,0.95);backdrop-filter:blur(10px);border-radius:10px;padding:10px 14px;font-size:12px;line-height:1.5;color:#e8e6e1;border:1px solid rgba(255,255,255,0.08);pointer-events:none;display:none;z-index:5';
+  canvasDiv.style.position='relative';
+  canvasDiv.appendChild(tip);
+
+  // Pan/zoom handlers
+  canvasDiv.addEventListener('mousedown',e=>{if(e.button===0){dragging=true;dx=e.clientX-tx;dy=e.clientY-ty;canvasDiv.classList.add('dragging')}});
+  window.addEventListener('mousemove',e=>{if(dragging){tx=e.clientX-dx;ty=e.clientY-dy;render()}});
+  window.addEventListener('mouseup',()=>{dragging=false;canvasDiv.classList.remove('dragging')});
+  canvasDiv.addEventListener('wheel',e=>{e.preventDefault();sc=Math.max(0.3,Math.min(3,sc*(e.deltaY>0?0.9:1.1)));render()},{passive:false});
+
+  function getHidden(){
+    const h=new Set();
+    layout.nodes.forEach(n=>{
+      if(collapsed.has(n.id)){
+        const stk=[...n.childIds];
+        while(stk.length){const c=stk.pop();h.add(c);const cn=layout.nodes.find(x=>x.id===c);if(cn)stk.push(...cn.childIds)}
+      }
+    });
+    return h;
+  }
+
+  function render(){
+    while(svg.firstChild)svg.removeChild(svg.firstChild);
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('transform',`translate(${tx},${ty}) scale(${sc})`);
+    svg.appendChild(g);
+    const hidden=getHidden();
+    const nm=new Map();layout.nodes.forEach(n=>nm.set(n.id,n));
+    const fs=[18,13,11],fw=[700,600,400],lw=[3,2,1.5];
+
+    // Edges
+    layout.edges.forEach(e=>{
+      if(hidden.has(e.from)||hidden.has(e.to))return;
+      const a=nm.get(e.from),b=nm.get(e.to);if(!a||!b)return;
+      const col=e.bi>=0?pal[e.bi%pal.length]:'#555';
+      const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+      const cx1=(a.x+b.x)/2+(a.y-b.y)*0.15,cy1=(a.y+b.y)/2+(b.x-a.x)*0.15;
+      p.setAttribute('d',`M ${a.x} ${a.y} Q ${cx1} ${cy1} ${b.x} ${b.y}`);
+      p.setAttribute('fill','none');p.setAttribute('stroke',col);
+      p.setAttribute('stroke-width',lw[e.depth-1]||1);
+      p.setAttribute('stroke-opacity',e.depth===1?'0.5':'0.3');
+      p.setAttribute('stroke-linecap','round');
+      g.appendChild(p);
+    });
+
+    // Nodes
+    layout.nodes.forEach(node=>{
+      if(hidden.has(node.id))return;
+      const col=node.bi>=0?pal[node.bi%pal.length]:'#0d1b2a';
+      const isInq=node.type==='inquiry';
+      const ng=document.createElementNS('http://www.w3.org/2000/svg','g');
+      ng.setAttribute('transform',`translate(${node.x},${node.y})`);
+      ng.style.cursor=node.childIds.length&&node.depth>0?'pointer':'default';
+
+      const charW=(fs[node.depth]||11)*0.55;
+      const px=node.depth===0?30:14;
+      const w=Math.max(node.label.length*charW+px*2,60);
+      const h=node.depth===0?42:30;
+
+      if(node.depth<=1||!isInq){
+        const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+        rect.setAttribute('x',-w/2);rect.setAttribute('y',-h/2);
+        rect.setAttribute('width',w);rect.setAttribute('height',h);
+        rect.setAttribute('rx',node.depth===0?12:16);
+        rect.setAttribute('fill',node.depth===0?'#0d1b2a':node.depth===1?col:lighten(col));
+        rect.setAttribute('opacity',node.depth===0?'1':'0.9');
+        if(isInq){rect.setAttribute('fill','transparent');rect.setAttribute('stroke',col);rect.setAttribute('stroke-width','1.5');rect.setAttribute('stroke-dasharray','4 3')}
+        ng.appendChild(rect);
+      } else if(isInq){
+        const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+        rect.setAttribute('x',-w/2);rect.setAttribute('y',-h/2);
+        rect.setAttribute('width',w);rect.setAttribute('height',h);rect.setAttribute('rx',16);
+        rect.setAttribute('fill','transparent');rect.setAttribute('stroke',col);
+        rect.setAttribute('stroke-width','1.5');rect.setAttribute('stroke-dasharray','4 3');
+        ng.appendChild(rect);
+      } else {
+        const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+        rect.setAttribute('x',-w/2);rect.setAttribute('y',-h/2);
+        rect.setAttribute('width',w);rect.setAttribute('height',h);rect.setAttribute('rx',16);
+        rect.setAttribute('fill',lighten(col));rect.setAttribute('opacity','0.9');
+        ng.appendChild(rect);
+      }
+
+      const text=document.createElementNS('http://www.w3.org/2000/svg','text');
+      text.setAttribute('text-anchor','middle');text.setAttribute('dy','0.35em');
+      text.setAttribute('font-size',fs[node.depth]||11);
+      text.setAttribute('font-weight',fw[node.depth]||400);
+      text.setAttribute('fill',node.depth<=1?(isInq?col:'#fff'):(isInq?col:'#333'));
+      text.style.fontFamily='DM Sans,system-ui,sans-serif';text.style.pointerEvents='none';
+      text.textContent=node.label;
+      ng.appendChild(text);
+
+      // Collapse indicator
+      if(node.childIds.length&&node.depth>0){
+        const ci=document.createElementNS('http://www.w3.org/2000/svg','text');
+        ci.setAttribute('x',w/2-12);ci.setAttribute('text-anchor','middle');
+        ci.setAttribute('dy','0.35em');ci.setAttribute('font-size','10');
+        ci.setAttribute('fill',node.depth===1?'#fff':'#666');ci.setAttribute('opacity','0.6');
+        ci.style.pointerEvents='none';
+        ci.textContent=collapsed.has(node.id)?'▸':'▾';
+        ng.appendChild(ci);
+      }
+
+      // Hover + click
+      ng.addEventListener('mouseenter',()=>{
+        hovered=node.id;
+        if(node.detail){
+          tip.innerHTML=`<div style="font-weight:600;font-size:11px;color:${col};margin-bottom:4px">${node.label}</div>${node.detail}`;
+          tip.style.display='block';
+        }
+        ng.setAttribute('transform',`translate(${node.x},${node.y}) scale(1.06)`);
+      });
+      ng.addEventListener('mouseleave',()=>{
+        hovered=null;tip.style.display='none';
+        ng.setAttribute('transform',`translate(${node.x},${node.y})`);
+      });
+      ng.addEventListener('click',e=>{
+        e.stopPropagation();
+        if(node.childIds.length&&node.depth>0){
+          if(collapsed.has(node.id))collapsed.delete(node.id);else collapsed.add(node.id);
+          render();
+        }
+      });
+
+      g.appendChild(ng);
+    });
+  }
+
+  render();
+}
+
+// ═══ DEMO DATA ═══
+
+const grayscaleData = {
+  central: "Macro Case for Crypto",
+  branches: [
+    { label:"🏦 Fiat Trust System", group:0, children:[
+      {label:"No intrinsic value",detail:"Fiat money works because of institutions, not paper. A system based on trust."},
+      {label:"Credibility anchors supply",detail:"Governments promise to limit supply; the public judges if they mean it."},
+      {label:"Central bank independence",detail:"Independent central banks with inflation targets — the dominant framework since the 1990s."},
+      {label:"EM currencies failing",detail:"10 countries with ~1B people already use crypto as a monetary life raft."},
+    ]},
+    { label:"💰 U.S. Debt Crisis", group:1, children:[
+      {label:"Debt ~100% of GDP",detail:"National debt ~$30T, nearly WWII levels, projected to keep rising sharply."},
+      {label:"6% avg deficit since '08",detail:"Up from just 1% in 2007. Average annual deficit ~6% of GDP since the financial crisis."},
+      {label:"Revenue ≤ mandatory + interest",detail:"Nothing left for discretionary spending. Balancing requires painful cuts or tax hikes."},
+      {label:"Bipartisan & intractable",detail:"Sustained under both parties. The One Big Beautiful Bill Act keeps deficits high for 10+ years."},
+    ]},
+    { label:"📈 Yields & Snowball", group:1, children:[
+      {label:"Rising bond yields",detail:"The multidecade falling-yields trend appears over. Treasury demand at low yields is satiated."},
+      {label:"Foreign demand declining",detail:"EM reserve slowdown, end of Japan deflation, and geopolitical shifts reduce appetite."},
+      {label:"Interest expense surging",detail:"Projected to reach 4–5% of GDP by 2050 as debt refinances at higher rates."},
+      {label:"Debt snowball effect",detail:"If interest rate > nominal GDP growth, debt/GDP rises automatically — even with balanced primary deficit."},
+    ]},
+    { label:"🔮 4 Possible Outcomes", group:2, children:[
+      {label:"Fiscal contraction",detail:"Spending cuts / tax increases. Possible eventually, but Congress just expanded deficits."},
+      {label:"AI-driven growth boom",detail:"High GDP growth could ease debt. Not visible in data yet but an AI productivity surge could help."},
+      {label:"Low rates + inflation",detail:"Grayscale's base case: ~3% rates, ~4% inflation could stabilize debt without cutting deficits."},
+      {label:"Default (very unlikely)",detail:"Debt is USD-denominated — inflation is always less painful than non-payment."},
+    ]},
+    { label:"🛡️ Crypto as Hedge", group:2, children:[
+      {label:"Programmatic supply",detail:"Bitcoin capped at 21M coins. Grows 450 BTC/day, halves every ~4 years. Transparent and immutable."},
+      {label:"No institutional master",detail:"Unlike fiat, supply can't be inflated by a government servicing debts. No one controls it."},
+      {label:"BTC + ETH as store of value",detail:"Viable due to broad adoption, decentralization, and limited supply growth."},
+      {label:"❓ Volatility problem",type:"inquiry",detail:"Report argues crypto = store of value but doesn't address 50–80% historical drawdowns."},
+    ]},
+    { label:"⚠️ What Could Reverse", group:2, children:[
+      {label:"Govt restores credibility",detail:"Stabilize debt/GDP + reinforce inflation targets + buttress central bank independence → crypto demand falls."},
+      {label:"Gold precedent: 1980s–90s",detail:"Gold thrived in 1970s low-credibility era, then declined when the Fed regained control."},
+      {label:"❓ Regulatory risk",type:"inquiry",detail:"Report omits possibility of governments directly restricting crypto adoption."},
+      {label:"❓ CBDC competition",type:"inquiry",detail:"Central bank digital currencies could offer crypto's efficiency under government control."},
+    ]},
+  ],
+};
+
+const deepWorkData = {
+  central: "Deep Work",
+  branches: [
+    { label:"🧠 Core Thesis", group:0, children:[
+      {label:"Distraction-free focus",detail:"Professional activity in distraction-free concentration that pushes cognitive limits."},
+      {label:"Creates irreplaceable value",detail:"Deep work produces results that are hard to replicate — the output can't be automated."},
+      {label:"Rare yet vital",detail:"This skill is becoming rarer exactly when it's becoming more valuable in the economy."},
+      {label:"Work = Time × Focus",detail:"High-Quality Work = (Time Spent) × (Intensity of Focus). Newport's core formula."},
+    ]},
+    { label:"⚡ Why It Matters", group:0, children:[
+      {label:"Master hard things fast",detail:"The two core abilities for thriving: learning complex things quickly and producing at elite level."},
+      {label:"Triggers flow state",detail:"Deep work generates Csikszentmihalyi's flow — stretching your mind, losing yourself in activity."},
+      {label:"Automation-proof",detail:"Creative, deeply human work that can't be replaced by algorithms or outsourced."},
+    ]},
+    { label:"🚧 Enemies of Depth", group:1, children:[
+      {label:"Open floor plans",detail:"Meant for collaboration but create continuous distraction. One person disrupts dozens."},
+      {label:"Email & messaging",detail:"Instant messaging was supposed to boost productivity but fragments attention instead."},
+      {label:"Social media",detail:"The 'any-benefit' mindset justifies tools for minor gains while ignoring major attention costs."},
+      {label:"Busyness ≠ productivity",detail:"Without clear indicators, workers default to visible busywork as a productivity proxy."},
+    ]},
+    { label:"📅 4 Scheduling Modes", group:2, children:[
+      {label:"Monastic",detail:"Radically eliminate all shallow obligations. Stephenson doesn't publish his email address."},
+      {label:"Bimodal",detail:"Alternate between defined deep-work retreats and normal periods. Jung's Bollingen approach."},
+      {label:"Rhythmic (best default)",detail:"Daily habit at set times. Don't-break-the-chain method. Most practical for most people."},
+      {label:"Journalistic",detail:"Fit deep work in wherever gaps appear. Requires practiced ability to switch modes rapidly."},
+    ]},
+    { label:"🏋️ Training Attention", group:2, children:[
+      {label:"Embrace boredom",detail:"Seeking stimulation at every idle moment trains your brain against sustained focus."},
+      {label:"Productive meditation",detail:"Focus on one problem during physical activity — walking, jogging, showering. 2–3×/week."},
+      {label:"Craftsman tool selection",detail:"Only adopt tools whose benefits substantially outweigh costs for what matters most."},
+      {label:"❓ Neuroplasticity evidence",type:"inquiry",detail:"Sources say 'rewire your brain' but cite no specific neuroscience studies."},
+    ]},
+    { label:"🎯 4 Disciplines", group:2, children:[
+      {label:"Focus on wildly important",detail:"Identify a small number of ambitious outcomes to pursue during deep work hours."},
+      {label:"Act on lead measures",detail:"Track hours in deep work (lead), not output produced (lag measure)."},
+      {label:"Keep a scoreboard",detail:"Physical tally of deep work hours per week. Physical boards beat digital trackers."},
+      {label:"Weekly accountability",detail:"Weekly review: celebrate wins, diagnose bad weeks, plan ahead."},
+    ]},
+  ],
+};
+
+// Initialize demos
+createDemo('demo1', grayscaleData, 'Bauhaus');
+createDemo('demo2', deepWorkData, 'Ocean Sunset');
+
+// Scroll reveal
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
 </body>
 </html>
