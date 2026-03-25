@@ -292,6 +292,12 @@ fabricate references.
      update reactively via React state. The selector sits after the Details toggle and before
      the export buttons. Keep it compact: a single 🎨 button that expands a popover on
      click works well to avoid toolbar clutter.
+   - **Fullscreen toggle**: A ⛶ button at the end of the control bar. Clicking it expands
+     the mind map to fill the entire viewport (`position: fixed`, `100vw × 100vh`,
+     `z-index: 10000`). The button label swaps to ✕ while fullscreen. Three exit methods:
+     clicking ✕, pressing Escape, or clicking ⛶ again. Lock `body` overflow while
+     fullscreen to prevent background scrolling. The canvas area should flex to fill
+     all available height below the toolbar.
    - Fit-to-view button resets transform
 
 5. **Legend/controls** — small control bar at top-right with zoom buttons and fit-to-view
@@ -351,6 +357,7 @@ Before finalizing, verify:
 - [ ] Focus mode "Back to full map" button works correctly
 - [ ] Semantic grouping: related branches are adjacent on the circle
 - [ ] Palette selector present with 4 named palettes; switching updates all colors reactively
+- [ ] Fullscreen toggle (⛶) works; Escape key exits; body scroll locked while active
 - [ ] Weighted nodes are subtly larger, not cartoonishly oversized
 - [ ] The map tells a coherent story you could present to someone
 
