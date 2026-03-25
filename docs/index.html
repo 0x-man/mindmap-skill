@@ -180,14 +180,14 @@ function buildLayout(data){
     if(i>0&&groups.includes(i))ang+=ge;
     const ba=ang+(i*0.04-0.06),bx=cx+Math.cos(ba)*210,by=cy+Math.sin(ba)*210;
     const bId=`b-${branch.oi}`;
-    nodes.push({id:bId,label:branch.label,x:bx,y:by,depth:1,childIds:[],collapsed:false,bi:branch.oi,type:null,detail:branch.detail||null});
+    nodes.push({id:bId,label:branch.label,x:bx,y:by,depth:1,childIds:[],collapsed:false,bi:branch.oi,type:null,detail:branch.detail||null,sid:branch.sourceId||null});
     nodes[0].childIds.push(bId);
     edges.push({from:"root",to:bId,depth:1,bi:branch.oi});
     (branch.children||[]).forEach((ch,j)=>{
       const cc=branch.children.length,sp=Math.PI*(cc>4?.65:.52),sa=ba-sp/2;
       const ca=cc===1?ba:sa+(j/(cc-1))*sp;
       const sx=bx+Math.cos(ca)*120,sy=by+Math.sin(ca)*120,cId=`s-${branch.oi}-${j}`;
-      nodes.push({id:cId,label:ch.label,x:sx,y:sy,depth:2,childIds:[],collapsed:false,bi:branch.oi,type:ch.type||null,detail:ch.detail||null});
+      nodes.push({id:cId,label:ch.label,x:sx,y:sy,depth:2,childIds:[],collapsed:false,bi:branch.oi,type:ch.type||null,detail:ch.detail||null,sid:ch.sourceId||null});
       nodes.find(n=>n.id===bId).childIds.push(cId);
       edges.push({from:bId,to:cId,depth:2,bi:branch.oi});
     });
@@ -204,6 +204,15 @@ function createDemo(containerId, data, defaultPal){
   let tx=0,ty=0,sc=1,dragging=false,dx=0,dy=0;
   let collapsed=new Set();
   let hovered=null;
+
+  // Build source lookup map
+  const srcMap=new Map();
+  (data.sources||[]).forEach((s,i)=>srcMap.set('s'+(i+1),s));
+  // Also support index-based lookup: sourceId "s1" → sources[0]
+  function getSrc(node){
+    if(!node.sid)return null;
+    return srcMap.get(node.sid)||null;
+  }
 
   // Build DOM
   const header=document.createElement('div');header.className='demo-header';
@@ -342,7 +351,7 @@ function createDemo(containerId, data, defaultPal){
   canvasDiv.appendChild(svg);
 
   const hint=document.createElement('div');hint.className='demo-hint';
-  hint.textContent='Scroll to zoom · Drag to pan · Click branches to collapse · ⛶ for fullscreen';
+  hint.textContent='Scroll to zoom · Drag to pan · Click branches to collapse · Click 🔗 nodes to open source';
   canvasDiv.appendChild(hint);
 
   // Tooltip
@@ -468,17 +477,36 @@ function createDemo(containerId, data, defaultPal){
         ng.appendChild(ci);
       }
 
+      // Source link icon (shown on hover)
+      const src=getSrc(node);
+      let linkIcon=null;
+      if(src&&node.depth>=1){
+        linkIcon=document.createElementNS('http://www.w3.org/2000/svg','text');
+        linkIcon.setAttribute('x',w/2-2);linkIcon.setAttribute('y',-h/2+2);
+        linkIcon.setAttribute('font-size','9');linkIcon.setAttribute('fill',node.depth===1?'#fff':col);
+        linkIcon.setAttribute('opacity','0');linkIcon.style.pointerEvents='none';linkIcon.style.transition='opacity 0.15s';
+        linkIcon.textContent='🔗';
+        ng.appendChild(linkIcon);
+      }
+
       // Hover + click
+      ng.style.cursor=node.childIds.length&&node.depth>0?'pointer':src?'pointer':'default';
       ng.addEventListener('mouseenter',()=>{
         hovered=node.id;
+        const srcInfo=src?`<div style="margin-top:6px;font-size:10px;color:rgba(255,255,255,0.4)">Source: ${src.label} 🔗</div>`:'';
         if(node.detail){
-          tip.innerHTML=`<div style="font-weight:600;font-size:11px;color:${col};margin-bottom:4px">${node.label}</div>${node.detail}`;
+          tip.innerHTML=`<div style="font-weight:600;font-size:11px;color:${col};margin-bottom:4px">${node.label}</div>${node.detail}${srcInfo}`;
+          tip.style.display='block';
+        } else if(src){
+          tip.innerHTML=`<div style="font-weight:600;font-size:11px;color:${col};margin-bottom:4px">${node.label}</div><div style="font-size:10px;color:rgba(255,255,255,0.4)">Click to open source 🔗</div>`;
           tip.style.display='block';
         }
+        if(linkIcon)linkIcon.setAttribute('opacity','0.7');
         ng.setAttribute('transform',`translate(${node.x},${node.y}) scale(1.06)`);
       });
       ng.addEventListener('mouseleave',()=>{
         hovered=null;tip.style.display='none';
+        if(linkIcon)linkIcon.setAttribute('opacity','0');
         ng.setAttribute('transform',`translate(${node.x},${node.y})`);
       });
       ng.addEventListener('click',e=>{
@@ -486,6 +514,8 @@ function createDemo(containerId, data, defaultPal){
         if(node.childIds.length&&node.depth>0){
           if(collapsed.has(node.id))collapsed.delete(node.id);else collapsed.add(node.id);
           render();
+        } else if(src){
+          window.open(src.url,'_blank','noopener');
         }
       });
 
@@ -504,39 +534,39 @@ const grayscaleData = {
     { label: "Grayscale — Zach Pandl, Sep 2025", url: "https://www.grayscale.com/research/reports/the-macro-case-for-crypto" },
   ],
   branches: [
-    { label:"🏦 Fiat Trust System", group:0, children:[
-      {label:"No intrinsic value",detail:"Fiat money works because of institutions, not paper. A system based on trust."},
-      {label:"Credibility anchors supply",detail:"Governments promise to limit supply; the public judges if they mean it."},
-      {label:"Central bank independence",detail:"Independent central banks with inflation targets — the dominant framework since the 1990s."},
-      {label:"EM currencies failing",detail:"10 countries with ~1B people already use crypto as a monetary life raft."},
+    { label:"🏦 Fiat Trust System", group:0, sourceId:"s1", children:[
+      {label:"No intrinsic value",sourceId:"s1",detail:"Fiat money works because of institutions, not paper. A system based on trust."},
+      {label:"Credibility anchors supply",sourceId:"s1",detail:"Governments promise to limit supply; the public judges if they mean it."},
+      {label:"Central bank independence",sourceId:"s1",detail:"Independent central banks with inflation targets — the dominant framework since the 1990s."},
+      {label:"EM currencies failing",sourceId:"s1",detail:"10 countries with ~1B people already use crypto as a monetary life raft."},
     ]},
-    { label:"💰 U.S. Debt Crisis", group:1, children:[
-      {label:"Debt ~100% of GDP",detail:"National debt ~$30T, nearly WWII levels, projected to keep rising sharply."},
-      {label:"6% avg deficit since '08",detail:"Up from just 1% in 2007. Average annual deficit ~6% of GDP since the financial crisis."},
-      {label:"Revenue ≤ mandatory + interest",detail:"Nothing left for discretionary spending. Balancing requires painful cuts or tax hikes."},
-      {label:"Bipartisan & intractable",detail:"Sustained under both parties. The One Big Beautiful Bill Act keeps deficits high for 10+ years."},
+    { label:"💰 U.S. Debt Crisis", group:1, sourceId:"s1", children:[
+      {label:"Debt ~100% of GDP",sourceId:"s1",detail:"National debt ~$30T, nearly WWII levels, projected to keep rising sharply."},
+      {label:"6% avg deficit since '08",sourceId:"s1",detail:"Up from just 1% in 2007. Average annual deficit ~6% of GDP since the financial crisis."},
+      {label:"Revenue ≤ mandatory + interest",sourceId:"s1",detail:"Nothing left for discretionary spending. Balancing requires painful cuts or tax hikes."},
+      {label:"Bipartisan & intractable",sourceId:"s1",detail:"Sustained under both parties. The One Big Beautiful Bill Act keeps deficits high for 10+ years."},
     ]},
-    { label:"📈 Yields & Snowball", group:1, children:[
-      {label:"Rising bond yields",detail:"The multidecade falling-yields trend appears over. Treasury demand at low yields is satiated."},
-      {label:"Foreign demand declining",detail:"EM reserve slowdown, end of Japan deflation, and geopolitical shifts reduce appetite."},
-      {label:"Interest expense surging",detail:"Projected to reach 4–5% of GDP by 2050 as debt refinances at higher rates."},
-      {label:"Debt snowball effect",detail:"If interest rate > nominal GDP growth, debt/GDP rises automatically — even with balanced primary deficit."},
+    { label:"📈 Yields & Snowball", group:1, sourceId:"s1", children:[
+      {label:"Rising bond yields",sourceId:"s1",detail:"The multidecade falling-yields trend appears over. Treasury demand at low yields is satiated."},
+      {label:"Foreign demand declining",sourceId:"s1",detail:"EM reserve slowdown, end of Japan deflation, and geopolitical shifts reduce appetite."},
+      {label:"Interest expense surging",sourceId:"s1",detail:"Projected to reach 4–5% of GDP by 2050 as debt refinances at higher rates."},
+      {label:"Debt snowball effect",sourceId:"s1",detail:"If interest rate > nominal GDP growth, debt/GDP rises automatically — even with balanced primary deficit."},
     ]},
-    { label:"🔮 4 Possible Outcomes", group:2, children:[
-      {label:"Fiscal contraction",detail:"Spending cuts / tax increases. Possible eventually, but Congress just expanded deficits."},
-      {label:"AI-driven growth boom",detail:"High GDP growth could ease debt. Not visible in data yet but an AI productivity surge could help."},
-      {label:"Low rates + inflation",detail:"Grayscale's base case: ~3% rates, ~4% inflation could stabilize debt without cutting deficits."},
-      {label:"Default (very unlikely)",detail:"Debt is USD-denominated — inflation is always less painful than non-payment."},
+    { label:"🔮 4 Possible Outcomes", group:2, sourceId:"s1", children:[
+      {label:"Fiscal contraction",sourceId:"s1",detail:"Spending cuts / tax increases. Possible eventually, but Congress just expanded deficits."},
+      {label:"AI-driven growth boom",sourceId:"s1",detail:"High GDP growth could ease debt. Not visible in data yet but an AI productivity surge could help."},
+      {label:"Low rates + inflation",sourceId:"s1",detail:"Grayscale's base case: ~3% rates, ~4% inflation could stabilize debt without cutting deficits."},
+      {label:"Default (very unlikely)",sourceId:"s1",detail:"Debt is USD-denominated — inflation is always less painful than non-payment."},
     ]},
-    { label:"🛡️ Crypto as Hedge", group:2, children:[
-      {label:"Programmatic supply",detail:"Bitcoin capped at 21M coins. Grows 450 BTC/day, halves every ~4 years. Transparent and immutable."},
-      {label:"No institutional master",detail:"Unlike fiat, supply can't be inflated by a government servicing debts. No one controls it."},
-      {label:"BTC + ETH as store of value",detail:"Viable due to broad adoption, decentralization, and limited supply growth."},
+    { label:"🛡️ Crypto as Hedge", group:2, sourceId:"s1", children:[
+      {label:"Programmatic supply",sourceId:"s1",detail:"Bitcoin capped at 21M coins. Grows 450 BTC/day, halves every ~4 years. Transparent and immutable."},
+      {label:"No institutional master",sourceId:"s1",detail:"Unlike fiat, supply can't be inflated by a government servicing debts. No one controls it."},
+      {label:"BTC + ETH as store of value",sourceId:"s1",detail:"Viable due to broad adoption, decentralization, and limited supply growth."},
       {label:"❓ Volatility problem",type:"inquiry",detail:"Report argues crypto = store of value but doesn't address 50–80% historical drawdowns."},
     ]},
-    { label:"⚠️ What Could Reverse", group:2, children:[
-      {label:"Govt restores credibility",detail:"Stabilize debt/GDP + reinforce inflation targets + buttress central bank independence → crypto demand falls."},
-      {label:"Gold precedent: 1980s–90s",detail:"Gold thrived in 1970s low-credibility era, then declined when the Fed regained control."},
+    { label:"⚠️ What Could Reverse", group:2, sourceId:"s1", children:[
+      {label:"Govt restores credibility",sourceId:"s1",detail:"Stabilize debt/GDP + reinforce inflation targets + buttress central bank independence → crypto demand falls."},
+      {label:"Gold precedent: 1980s–90s",sourceId:"s1",detail:"Gold thrived in 1970s low-credibility era, then declined when the Fed regained control."},
       {label:"❓ Regulatory risk",type:"inquiry",detail:"Report omits possibility of governments directly restricting crypto adoption."},
       {label:"❓ CBDC competition",type:"inquiry",detail:"Central bank digital currencies could offer crypto's efficiency under government control."},
     ]},
@@ -553,39 +583,39 @@ const deepWorkData = {
     { label: "Todoist guide", url: "https://www.todoist.com/inspiration/deep-work" },
   ],
   branches: [
-    { label:"🧠 Core Thesis", group:0, children:[
-      {label:"Distraction-free focus",detail:"Professional activity in distraction-free concentration that pushes cognitive limits."},
-      {label:"Creates irreplaceable value",detail:"Deep work produces results that are hard to replicate — the output can't be automated."},
-      {label:"Rare yet vital",detail:"This skill is becoming rarer exactly when it's becoming more valuable in the economy."},
-      {label:"Work = Time × Focus",detail:"High-Quality Work = (Time Spent) × (Intensity of Focus). Newport's core formula."},
+    { label:"🧠 Core Thesis", group:0, sourceId:"s1", children:[
+      {label:"Distraction-free focus",sourceId:"s1",detail:"Professional activity in distraction-free concentration that pushes cognitive limits."},
+      {label:"Creates irreplaceable value",sourceId:"s3",detail:"Deep work produces results that are hard to replicate — the output can't be automated."},
+      {label:"Rare yet vital",sourceId:"s3",detail:"This skill is becoming rarer exactly when it's becoming more valuable in the economy."},
+      {label:"Work = Time × Focus",sourceId:"s3",detail:"High-Quality Work = (Time Spent) × (Intensity of Focus). Newport's core formula."},
     ]},
-    { label:"⚡ Why It Matters", group:0, children:[
-      {label:"Master hard things fast",detail:"The two core abilities for thriving: learning complex things quickly and producing at elite level."},
-      {label:"Triggers flow state",detail:"Deep work generates Csikszentmihalyi's flow — stretching your mind, losing yourself in activity."},
+    { label:"⚡ Why It Matters", group:0, sourceId:"s2", children:[
+      {label:"Master hard things fast",sourceId:"s2",detail:"The two core abilities for thriving: learning complex things quickly and producing at elite level."},
+      {label:"Triggers flow state",sourceId:"s1",detail:"Deep work generates Csikszentmihalyi's flow — stretching your mind, losing yourself in activity."},
       {label:"Automation-proof",detail:"Creative, deeply human work that can't be replaced by algorithms or outsourced."},
     ]},
-    { label:"🚧 Enemies of Depth", group:1, children:[
-      {label:"Open floor plans",detail:"Meant for collaboration but create continuous distraction. One person disrupts dozens."},
-      {label:"Email & messaging",detail:"Instant messaging was supposed to boost productivity but fragments attention instead."},
-      {label:"Social media",detail:"The 'any-benefit' mindset justifies tools for minor gains while ignoring major attention costs."},
-      {label:"Busyness ≠ productivity",detail:"Without clear indicators, workers default to visible busywork as a productivity proxy."},
+    { label:"🚧 Enemies of Depth", group:1, sourceId:"s4", children:[
+      {label:"Open floor plans",sourceId:"s4",detail:"Meant for collaboration but create continuous distraction. One person disrupts dozens."},
+      {label:"Email & messaging",sourceId:"s2",detail:"Instant messaging was supposed to boost productivity but fragments attention instead."},
+      {label:"Social media",sourceId:"s3",detail:"The 'any-benefit' mindset justifies tools for minor gains while ignoring major attention costs."},
+      {label:"Busyness ≠ productivity",sourceId:"s3",detail:"Without clear indicators, workers default to visible busywork as a productivity proxy."},
     ]},
-    { label:"📅 4 Scheduling Modes", group:2, children:[
-      {label:"Monastic",detail:"Radically eliminate all shallow obligations. Stephenson doesn't publish his email address."},
-      {label:"Bimodal",detail:"Alternate between defined deep-work retreats and normal periods. Jung's Bollingen approach."},
-      {label:"Rhythmic (best default)",detail:"Daily habit at set times. Don't-break-the-chain method. Most practical for most people."},
+    { label:"📅 4 Scheduling Modes", group:2, sourceId:"s2", children:[
+      {label:"Monastic",sourceId:"s2",detail:"Radically eliminate all shallow obligations. Stephenson doesn't publish his email address."},
+      {label:"Bimodal",sourceId:"s2",detail:"Alternate between defined deep-work retreats and normal periods. Jung's Bollingen approach."},
+      {label:"Rhythmic (best default)",sourceId:"s4",detail:"Daily habit at set times. Don't-break-the-chain method. Most practical for most people."},
       {label:"Journalistic",detail:"Fit deep work in wherever gaps appear. Requires practiced ability to switch modes rapidly."},
     ]},
-    { label:"🏋️ Training Attention", group:2, children:[
-      {label:"Embrace boredom",detail:"Seeking stimulation at every idle moment trains your brain against sustained focus."},
-      {label:"Productive meditation",detail:"Focus on one problem during physical activity — walking, jogging, showering. 2–3×/week."},
-      {label:"Craftsman tool selection",detail:"Only adopt tools whose benefits substantially outweigh costs for what matters most."},
+    { label:"🏋️ Training Attention", group:2, sourceId:"s5", children:[
+      {label:"Embrace boredom",sourceId:"s1",detail:"Seeking stimulation at every idle moment trains your brain against sustained focus."},
+      {label:"Productive meditation",sourceId:"s5",detail:"Focus on one problem during physical activity — walking, jogging, showering. 2–3×/week."},
+      {label:"Craftsman tool selection",sourceId:"s1",detail:"Only adopt tools whose benefits substantially outweigh costs for what matters most."},
       {label:"❓ Neuroplasticity evidence",type:"inquiry",detail:"Sources say 'rewire your brain' but cite no specific neuroscience studies."},
     ]},
-    { label:"🎯 4 Disciplines", group:2, children:[
-      {label:"Focus on wildly important",detail:"Identify a small number of ambitious outcomes to pursue during deep work hours."},
-      {label:"Act on lead measures",detail:"Track hours in deep work (lead), not output produced (lag measure)."},
-      {label:"Keep a scoreboard",detail:"Physical tally of deep work hours per week. Physical boards beat digital trackers."},
+    { label:"🎯 4 Disciplines", group:2, sourceId:"s5", children:[
+      {label:"Focus on wildly important",sourceId:"s5",detail:"Identify a small number of ambitious outcomes to pursue during deep work hours."},
+      {label:"Act on lead measures",sourceId:"s5",detail:"Track hours in deep work (lead), not output produced (lag measure)."},
+      {label:"Keep a scoreboard",sourceId:"s3",detail:"Physical tally of deep work hours per week. Physical boards beat digital trackers."},
       {label:"Weekly accountability",detail:"Weekly review: celebrate wins, diagnose bad weeks, plan ahead."},
     ]},
   ],
