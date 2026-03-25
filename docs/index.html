@@ -236,6 +236,74 @@ function createDemo(containerId, data, defaultPal){
   });
   controls.appendChild(palDiv);
 
+  // Export buttons (SVG + PNG)
+  const expDiv=document.createElement('div');expDiv.style.cssText='display:flex;gap:4px;margin-left:6px;border-left:1px solid rgba(255,255,255,0.08);padding-left:8px';
+  const slug=data.central.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+
+  function exportSVG(){
+    const clone=svg.cloneNode(true);
+    clone.querySelector('g').setAttribute('transform','translate(0,0) scale(1)');
+    const xs=layout.nodes.map(n=>n.x),ys=layout.nodes.map(n=>n.y),pad=100;
+    const mx=Math.min(...xs)-pad*2,my=Math.min(...ys)-pad;
+    const w=Math.max(...xs)-Math.min(...xs)+pad*4,h=Math.max(...ys)-Math.min(...ys)+pad*2;
+    clone.setAttribute('viewBox',`${mx} ${my} ${w} ${h}`);
+    clone.setAttribute('width',w*2);clone.setAttribute('height',h*2);
+    clone.removeAttribute('style');
+    const sty=document.createElementNS('http://www.w3.org/2000/svg','style');
+    sty.textContent='text{font-family:Arial,Helvetica,sans-serif}';
+    clone.insertBefore(sty,clone.firstChild);
+    const bg=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    bg.setAttribute('x',mx);bg.setAttribute('y',my);bg.setAttribute('width',w);bg.setAttribute('height',h);bg.setAttribute('fill','#ffffff');
+    clone.querySelector('g').insertBefore(bg,clone.querySelector('g').firstChild);
+    const str='<?xml version="1.0" encoding="UTF-8"?>\n'+new XMLSerializer().serializeToString(clone);
+    const blob=new Blob([str],{type:'image/svg+xml;charset=utf-8'});
+    const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=slug+'.svg';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(u),200);
+  }
+
+  function exportPNG(){
+    const clone=svg.cloneNode(true);
+    clone.querySelector('g').setAttribute('transform','translate(0,0) scale(1)');
+    const xs=layout.nodes.map(n=>n.x),ys=layout.nodes.map(n=>n.y),pad=100;
+    const mx=Math.min(...xs)-pad*2,my=Math.min(...ys)-pad;
+    const w=Math.max(...xs)-Math.min(...xs)+pad*4,h=Math.max(...ys)-Math.min(...ys)+pad*2;
+    clone.setAttribute('viewBox',`${mx} ${my} ${w} ${h}`);
+    clone.setAttribute('width',w*2);clone.setAttribute('height',h*2);
+    clone.removeAttribute('style');
+    const sty=document.createElementNS('http://www.w3.org/2000/svg','style');
+    sty.textContent='text{font-family:Arial,Helvetica,sans-serif}';
+    clone.insertBefore(sty,clone.firstChild);
+    const bg=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    bg.setAttribute('x',mx);bg.setAttribute('y',my);bg.setAttribute('width',w);bg.setAttribute('height',h);bg.setAttribute('fill','#ffffff');
+    clone.querySelector('g').insertBefore(bg,clone.querySelector('g').firstChild);
+    const str=new XMLSerializer().serializeToString(clone);
+    const url=URL.createObjectURL(new Blob([str],{type:'image/svg+xml;charset=utf-8'}));
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas');c.width=w*2;c.height=h*2;
+      const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,w*2,h*2);
+      ctx.drawImage(img,0,0,w*2,h*2);URL.revokeObjectURL(url);
+      c.toBlob(blob=>{
+        const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=slug+'.png';
+        document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(u),200);
+      },'image/png');
+    };
+    img.onerror=()=>URL.revokeObjectURL(url);
+    img.src=url;
+  }
+
+  ['SVG','PNG'].forEach(fmt=>{
+    const b=document.createElement('button');b.className='demo-btn';b.textContent=fmt;
+    b.style.fontSize='11px';b.style.fontWeight='700';b.style.letterSpacing='0.3px';
+    b.onclick=()=>{
+      if(fmt==='SVG')exportSVG();else exportPNG();
+      b.textContent='✓';b.classList.add('active');
+      setTimeout(()=>{b.textContent=fmt;b.classList.remove('active')},1500);
+    };
+    expDiv.appendChild(b);
+  });
+  controls.appendChild(expDiv);
+
   header.appendChild(title);header.appendChild(controls);
   container.appendChild(header);
 
@@ -248,7 +316,7 @@ function createDemo(containerId, data, defaultPal){
   canvasDiv.appendChild(svg);
 
   const hint=document.createElement('div');hint.className='demo-hint';
-  hint.textContent='Scroll to zoom · Drag to pan · Click branches to collapse';
+  hint.textContent='Scroll to zoom · Drag to pan · Click branches to collapse · SVG/PNG to download';
   canvasDiv.appendChild(hint);
 
   // Tooltip
