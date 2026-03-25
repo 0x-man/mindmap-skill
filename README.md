@@ -1,4 +1,4 @@
-# 🧠 Mind Map Generator — Claude Skill
+# 🧠🗺️ Mind Map Generator — Claude Skill
 
 A Claude skill that generates interactive, visually polished mind maps from any content — text, documents, conversations, topics, brainstorms, or ideas.
 
