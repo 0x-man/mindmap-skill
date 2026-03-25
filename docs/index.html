@@ -351,6 +351,24 @@ function createDemo(containerId, data, defaultPal){
   canvasDiv.style.position='relative';
   canvasDiv.appendChild(tip);
 
+  // Source footer
+  if(data.sources&&data.sources.length){
+    const footer=document.createElement('div');
+    footer.style.cssText='padding:6px 16px;border-top:1px solid rgba(255,255,255,0.06);display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;font-size:10px;color:rgba(255,255,255,0.4)';
+    const lbl=document.createElement('span');lbl.textContent='Source'+(data.sources.length>1?'s':'')+':';lbl.style.cssText='font-weight:600;color:rgba(255,255,255,0.5)';
+    footer.appendChild(lbl);
+    data.sources.forEach((s,i)=>{
+      const a=document.createElement('a');
+      a.href=s.url;a.target='_blank';a.rel='noopener noreferrer';
+      a.textContent=`[${i+1}] ${s.label}`;
+      a.style.cssText='color:rgba(255,255,255,0.45);text-decoration:none;border-bottom:1px dotted rgba(255,255,255,0.2);transition:color 0.15s';
+      a.addEventListener('mouseenter',()=>a.style.color='var(--accent)');
+      a.addEventListener('mouseleave',()=>a.style.color='rgba(255,255,255,0.45)');
+      footer.appendChild(a);
+    });
+    container.appendChild(footer);
+  }
+
   // Pan/zoom handlers
   canvasDiv.addEventListener('mousedown',e=>{if(e.button===0){dragging=true;dx=e.clientX-tx;dy=e.clientY-ty;canvasDiv.classList.add('dragging')}});
   window.addEventListener('mousemove',e=>{if(dragging){tx=e.clientX-dx;ty=e.clientY-dy;render()}});
@@ -482,6 +500,9 @@ function createDemo(containerId, data, defaultPal){
 
 const grayscaleData = {
   central: "Macro Case for Crypto",
+  sources: [
+    { label: "Grayscale — Zach Pandl, Sep 2025", url: "https://www.grayscale.com/research/reports/the-macro-case-for-crypto" },
+  ],
   branches: [
     { label:"🏦 Fiat Trust System", group:0, children:[
       {label:"No intrinsic value",detail:"Fiat money works because of institutions, not paper. A system based on trust."},
@@ -524,6 +545,13 @@ const grayscaleData = {
 
 const deepWorkData = {
   central: "Deep Work",
+  sources: [
+    { label: "Newport — grahammann.net", url: "https://grahammann.net/book-notes/deep-work-cal-newport" },
+    { label: "Runn.io summary", url: "https://www.runn.io/blog/deep-work-summary" },
+    { label: "Dan Silvestre notes", url: "https://dansilvestre.com/summaries/deep-work-summary/" },
+    { label: "Clockwise guide", url: "https://www.getclockwise.com/blog/deep-work" },
+    { label: "Todoist guide", url: "https://www.todoist.com/inspiration/deep-work" },
+  ],
   branches: [
     { label:"🧠 Core Thesis", group:0, children:[
       {label:"Distraction-free focus",detail:"Professional activity in distraction-free concentration that pushes cognitive limits."},
