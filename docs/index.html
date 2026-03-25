@@ -60,6 +60,11 @@
   .demo-canvas.dragging{cursor:grabbing}
   .demo-hint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,255,255,0.3);background:rgba(0,0,0,0.4);padding:3px 12px;border-radius:20px;pointer-events:none;white-space:nowrap}
 
+  /* Fullscreen mode */
+  .demo-wrapper.fullscreen{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:10000;border-radius:0;border:none;display:flex;flex-direction:column}
+  .demo-wrapper.fullscreen .demo-canvas{flex:1;height:auto}
+  .demo-wrapper.fullscreen .demo-header{border-radius:0}
+
   /* Palette swatches */
   .pal-row{display:flex;gap:6px}
   .pal-btn{display:flex;gap:2px;padding:3px 5px;border-radius:6px;border:1px solid transparent;background:none;cursor:pointer;transition:all .15s}
@@ -304,6 +309,27 @@ function createDemo(containerId, data, defaultPal){
   });
   controls.appendChild(expDiv);
 
+  // Fullscreen toggle
+  let isFullscreen=false;
+  const fsBtn=document.createElement('button');fsBtn.className='demo-btn';fsBtn.textContent='⛶';
+  fsBtn.title='Toggle fullscreen';fsBtn.style.cssText='width:28px;font-size:15px;margin-left:4px';
+  fsBtn.onclick=()=>{
+    isFullscreen=!isFullscreen;
+    if(isFullscreen){
+      container.classList.add('fullscreen');
+      fsBtn.textContent='✕';fsBtn.title='Exit fullscreen';
+      document.body.style.overflow='hidden';
+    } else {
+      container.classList.remove('fullscreen');
+      fsBtn.textContent='⛶';fsBtn.title='Toggle fullscreen';
+      document.body.style.overflow='';
+    }
+  };
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&isFullscreen){fsBtn.click()}
+  });
+  controls.appendChild(fsBtn);
+
   header.appendChild(title);header.appendChild(controls);
   container.appendChild(header);
 
@@ -316,7 +342,7 @@ function createDemo(containerId, data, defaultPal){
   canvasDiv.appendChild(svg);
 
   const hint=document.createElement('div');hint.className='demo-hint';
-  hint.textContent='Scroll to zoom · Drag to pan · Click branches to collapse · SVG/PNG to download';
+  hint.textContent='Scroll to zoom · Drag to pan · Click branches to collapse · ⛶ for fullscreen';
   canvasDiv.appendChild(hint);
 
   // Tooltip
