@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mind Map Generator — Claude Skill</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0f14;
+    --bg-card: #13161d;
+    --bg-card-hover: #191d27;
+    --text: #e8e6e1;
+    --text-muted: #8a8780;
+    --accent: #e9b44c;
+    --accent2: #2a9d8f;
+    --accent3: #e76f51;
+    --border: rgba(255,255,255,0.06);
+    --glow: rgba(233,180,76,0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Grain overlay ── */
+  body::after {
+    content: '';
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.5;
+  }
+
+  /* ── Layout ── */
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 100px 0 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-badge span { color: var(--text-muted); }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(42px, 6vw, 72px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
+  h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 36px;
+    animation: fadeUp 0.6s ease 0.2s both;
+  }
+  .hero-actions {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    animation: fadeUp 0.6s ease 0.3s both;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 26px;
+    border-radius: 10px;
+    font-size: 15px; font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer; border: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0c0f14;
+  }
+  .btn-primary:hover { background: #d4a243; transform: translateY(-1px); box-shadow: 0 8px 30px rgba(233,180,76,0.2); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.15); background: var(--bg-card); }
+
+  /* ── Section headers ── */
+  .section { padding: 80px 0; }
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+  .section-desc {
+    color: var(--text-muted);
+    font-size: 16px;
+    max-width: 520px;
+    margin-bottom: 48px;
+  }
+
+  /* ── Feature grid ── */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 24px;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
+  }
+  .feature-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .feature-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .feature-card p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ── Example showcase ── */
+  .examples-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .example-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.25s;
+  }
+  .example-card:hover {
+    border-color: rgba(255,255,255,0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  }
+  .example-preview {
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .example-info {
+    padding: 20px 22px;
+    border-top: 1px solid var(--border);
+  }
+  .example-info h3 { font-size: 16px; margin-bottom: 6px; }
+  .example-info p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+  .example-tags {
+    display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 100px;
+    background: rgba(255,255,255,0.05);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .tag-accent { color: var(--accent); border-color: rgba(233,180,76,0.2); background: rgba(233,180,76,0.06); }
+  .tag-green { color: var(--accent2); border-color: rgba(42,157,143,0.2); background: rgba(42,157,143,0.06); }
+
+  /* ── Mini mind map SVGs in example cards ── */
+  .mini-map { width: 100%; height: 100%; }
+  .mini-map circle { transition: r 0.3s; }
+  .example-card:hover .mini-map .pulse { animation: pulse 1.5s ease infinite; }
+
+  /* ── Install section ── */
+  .install-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    counter-reset: step;
+  }
+  .step-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 24px;
+    position: relative;
+    counter-increment: step;
+  }
+  .step-card::before {
+    content: counter(step);
+    position: absolute;
+    top: 20px; right: 20px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 48px;
+    color: rgba(255,255,255,0.04);
+    line-height: 1;
+  }
+  .step-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .step-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+  .step-card code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: rgba(255,255,255,0.05);
+    padding: 2px 7px;
+    border-radius: 5px;
+    color: var(--accent);
+  }
+
+  /* ── Palette showcase ── */
+  .palette-row {
+    display: flex; gap: 24px; flex-wrap: wrap;
+    margin-top: 32px;
+  }
+  .palette-item {
+    display: flex; flex-direction: column; gap: 8px; align-items: center;
+  }
+  .palette-swatches {
+    display: flex; gap: 4px;
+  }
+  .swatch {
+    width: 28px; height: 28px; border-radius: 8px;
+    transition: transform 0.2s;
+  }
+  .swatch:hover { transform: scale(1.15); }
+  .palette-name {
+    font-size: 12px; color: var(--text-muted); font-weight: 500;
+  }
+
+  /* ── Footer ── */
+  footer {
+    padding: 48px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .container { padding: 0 20px; }
+    .hero { padding: 60px 0 48px; }
+    .section { padding: 48px 0; }
+    .features, .examples-grid, .install-steps { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════ HERO ════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">🧠 Claude Skill <span>· Open Source</span></div>
+    <h1>Turn anything into<br>an <em>intelligent</em> mind map</h1>
+    <p class="hero-sub">
+      A Claude skill that transforms documents, articles, brainstorms, and ideas into interactive mind maps with contradiction detection, gap analysis, source attribution, and 6 export formats.
+    </p>
+    <div class="hero-actions">
+      <a href="https://github.com/0x-man/mindmap-skill/releases/latest" class="btn btn-primary">
+        ↓ Download .skill file
+      </a>
+      <a href="https://github.com/0x-man/mindmap-skill" class="btn btn-ghost">
+        View on GitHub →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ EXAMPLES ════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-label reveal">Examples</div>
+    <h2 class="reveal">Built from real content</h2>
+    <p class="section-desc reveal">Each map was generated from a single prompt. Hover for details.</p>
+
+    <div class="examples-grid">
+      <!-- Example 1: Grayscale -->
+      <div class="example-card reveal">
+        <div class="example-preview" style="background: linear-gradient(135deg, #0d1b2a 0%, #1b2838 100%);">
+          <svg class="mini-map" viewBox="0 0 400 260">
+            <circle cx="200" cy="130" r="22" fill="#0d1b2a" stroke="#2a3a4a" stroke-width="1"/>
+            <text x="200" y="134" text-anchor="middle" fill="#fff" font-size="8" font-weight="700" font-family="DM Sans,sans-serif">Macro Case</text>
+            <g opacity="0.7">
+              <line x1="200" y1="130" x2="85" y2="60" stroke="#D64045" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="320" y2="55" stroke="#1D3557" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="340" y2="145" stroke="#E9B44C" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="310" y2="220" stroke="#2D6A4F" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="105" y2="210" stroke="#457B9D" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="60" y2="145" stroke="#7B2D8E" stroke-width="1.5" opacity="0.4"/>
+            </g>
+            <circle cx="85" cy="60" r="14" fill="#D64045" opacity="0.9"/><text x="85" y="63" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🏦 Fiat</text>
+            <circle cx="320" cy="55" r="14" fill="#1D3557" opacity="0.9"/><text x="320" y="58" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">💰 Debt</text>
+            <circle cx="340" cy="145" r="14" fill="#E9B44C" opacity="0.9"/><text x="340" y="148" text-anchor="middle" fill="#1a1a2e" font-size="6" font-family="DM Sans">📈 Yields</text>
+            <circle cx="310" cy="220" r="14" fill="#2D6A4F" opacity="0.9"/><text x="310" y="223" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🔮 Paths</text>
+            <circle cx="105" cy="210" r="14" fill="#457B9D" opacity="0.9"/><text x="105" y="213" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🛡️ Crypto</text>
+            <circle cx="60" cy="145" r="14" fill="#7B2D8E" opacity="0.9"/><text x="60" y="148" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">⚠️ Risks</text>
+            <path d="M 85 74 Q 140 110 170 116" fill="none" stroke="#D64045" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="example-info">
+          <h3>The Macro Case for Crypto</h3>
+          <p>14-page Grayscale research report compressed into 6 branches with contradiction detection and 3 inquiry nodes.</p>
+          <div class="example-tags">
+            <span class="tag tag-accent">PDF input</span>
+            <span class="tag">⚡ Contradictions</span>
+            <span class="tag">❓ Gaps</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 2: Deep Work -->
+      <div class="example-card reveal">
+        <div class="example-preview" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+          <svg class="mini-map" viewBox="0 0 400 260">
+            <circle cx="200" cy="130" r="22" fill="#1a1a2e" stroke="#2a3a4a" stroke-width="1"/>
+            <text x="200" y="134" text-anchor="middle" fill="#fff" font-size="9" font-weight="700" font-family="DM Sans,sans-serif">Deep Work</text>
+            <g opacity="0.7">
+              <line x1="200" y1="130" x2="75" y2="55" stroke="#E76F51" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="310" y2="45" stroke="#2A9D8F" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="350" y2="130" stroke="#264653" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="310" y2="220" stroke="#E9C46A" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="100" y2="220" stroke="#F4A261" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="50" y2="140" stroke="#287271" stroke-width="1.5" opacity="0.4"/>
+            </g>
+            <circle cx="75" cy="55" r="13" fill="#E76F51" opacity="0.9"/><text x="75" y="58" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🧠 Thesis</text>
+            <circle cx="310" cy="45" r="13" fill="#2A9D8F" opacity="0.9"/><text x="310" y="48" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">⚡ Value</text>
+            <circle cx="350" cy="130" r="13" fill="#264653" opacity="0.9"/><text x="350" y="133" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🚧 Enemies</text>
+            <circle cx="310" cy="220" r="13" fill="#E9C46A" opacity="0.9"/><text x="310" y="223" text-anchor="middle" fill="#1a1a2e" font-size="6" font-family="DM Sans">📅 Modes</text>
+            <circle cx="100" cy="220" r="13" fill="#F4A261" opacity="0.9"/><text x="100" y="223" text-anchor="middle" fill="#1a1a2e" font-size="6" font-family="DM Sans">🏋️ Train</text>
+            <circle cx="50" cy="140" r="13" fill="#287271" opacity="0.9"/><text x="50" y="143" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🎯 4DX</text>
+          </svg>
+        </div>
+        <div class="example-info">
+          <h3>Deep Work — Cal Newport</h3>
+          <p>5,000+ words from 10 sources synthesized with frequency weighting and cross-branch links.</p>
+          <div class="example-tags">
+            <span class="tag tag-green">Multi-source</span>
+            <span class="tag">Weighted nodes</span>
+            <span class="tag">Cross-links</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 3: Cybersecurity -->
+      <div class="example-card reveal">
+        <div class="example-preview" style="background: linear-gradient(135deg, #0f1923 0%, #1a2332 100%);">
+          <svg class="mini-map" viewBox="0 0 400 260">
+            <circle cx="200" cy="130" r="22" fill="#1a1a2e" stroke="#2a3a4a" stroke-width="1"/>
+            <text x="200" y="128" text-anchor="middle" fill="#fff" font-size="7" font-weight="700" font-family="DM Sans,sans-serif">Cybersecurity</text>
+            <text x="200" y="139" text-anchor="middle" fill="#fff" font-size="7" font-weight="700" font-family="DM Sans,sans-serif">Fundamentals</text>
+            <g opacity="0.7">
+              <line x1="200" y1="130" x2="80" y2="50" stroke="#5B8C5A" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="320" y2="50" stroke="#4A6FA5" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="355" y2="145" stroke="#C17C74" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="310" y2="225" stroke="#7B6D8D" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="95" y2="220" stroke="#D4A574" stroke-width="1.5" opacity="0.4"/>
+              <line x1="200" y1="130" x2="45" y2="145" stroke="#4D8B8B" stroke-width="1.5" opacity="0.4"/>
+            </g>
+            <circle cx="80" cy="50" r="13" fill="#5B8C5A" opacity="0.9"/><text x="80" y="53" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🛡️ Network</text>
+            <circle cx="320" cy="50" r="13" fill="#4A6FA5" opacity="0.9"/><text x="320" y="53" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🔐 Crypto</text>
+            <circle cx="355" cy="145" r="13" fill="#C17C74" opacity="0.9"/><text x="355" y="148" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🧠 Social</text>
+            <circle cx="310" cy="225" r="13" fill="#7B6D8D" opacity="0.9"/><text x="310" y="228" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">⚙️ AppSec</text>
+            <circle cx="95" cy="220" r="13" fill="#D4A574" opacity="0.9"/><text x="95" y="223" text-anchor="middle" fill="#1a1a2e" font-size="6" font-family="DM Sans">📋 GRC</text>
+            <circle cx="45" cy="145" r="13" fill="#4D8B8B" opacity="0.9"/><text x="45" y="148" text-anchor="middle" fill="#fff" font-size="6" font-family="DM Sans">🔍 Detect</text>
+          </svg>
+        </div>
+        <div class="example-info">
+          <h3>Cybersecurity Fundamentals</h3>
+          <p>Broad topic generated from Claude's knowledge — no source material needed.</p>
+          <div class="example-tags">
+            <span class="tag">Topic input</span>
+            <span class="tag">6 branches</span>
+            <span class="tag">3 levels deep</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ FEATURES ════════════ -->
+<section class="section" style="background: linear-gradient(180deg, transparent, rgba(233,180,76,0.02), transparent);">
+  <div class="container">
+    <div class="section-label reveal">Features</div>
+    <h2 class="reveal">Not just a pretty diagram</h2>
+    <p class="section-desc reveal">Content intelligence that surfaces what's interesting — contradictions, gaps, consensus, and hidden connections.</p>
+
+    <div class="features">
+      <div class="feature-card reveal">
+        <span class="feature-icon">⚡</span>
+        <h3>Contradiction Detection</h3>
+        <p>When sources disagree on a claim, both nodes get flagged and connected with a red dashed arc. You see the tension, not a false consensus.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">❓</span>
+        <h3>Gap Analysis</h3>
+        <p>Structurally important areas with thin evidence get inquiry nodes — dashed borders that signal "this is a question, not an assertion."</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">⤸</span>
+        <h3>Cross-Branch Links</h3>
+        <p>Dotted arcs connect ideas across branches when they have non-obvious relationships. Labeled with verbs like "enables" or "blocks."</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">◎</span>
+        <h3>Focus Mode</h3>
+        <p>Click any branch to isolate it — everything else fades to 8%. Navigate dense maps without needing separate pages.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">⊕</span>
+        <h3>Progressive Disclosure</h3>
+        <p>Toggle between keyword-only map view and full detail reading mode. One artifact, two uses.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🔗</span>
+        <h3>Source Attribution</h3>
+        <p>Nodes traced to their source with hover links and a footer reference list. No fabricated citations — ever.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🎨</span>
+        <h3>4 Color Palettes</h3>
+        <p>Switch between Bauhaus, Ocean Sunset, Nordic Forest, and Pastel Garden at runtime. Exports use the active palette.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">↓</span>
+        <h3>6 Export Formats</h3>
+        <p>SVG, PNG (2× retina), PDF (native vector), Markdown, and Mermaid. Portable font stack that renders everywhere.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🧲</span>
+        <h3>Semantic Gravity</h3>
+        <p>Related branches sit adjacent on the circle. Physical proximity encodes conceptual relatedness — space becomes meaning.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ PALETTES ════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="section-label reveal">Palettes</div>
+    <h2 class="reveal">Pick the mood</h2>
+    <p class="section-desc reveal">Each palette is designed for a different tone. Switch at runtime — the map recolors instantly.</p>
+    <div class="palette-row reveal">
+      <div class="palette-item">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#D64045"></div>
+          <div class="swatch" style="background:#1D3557"></div>
+          <div class="swatch" style="background:#E9B44C"></div>
+          <div class="swatch" style="background:#2D6A4F"></div>
+          <div class="swatch" style="background:#7B2D8E"></div>
+          <div class="swatch" style="background:#E07A5F"></div>
+        </div>
+        <span class="palette-name">Bauhaus</span>
+      </div>
+      <div class="palette-item">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#E76F51"></div>
+          <div class="swatch" style="background:#2A9D8F"></div>
+          <div class="swatch" style="background:#E9C46A"></div>
+          <div class="swatch" style="background:#264653"></div>
+          <div class="swatch" style="background:#F4A261"></div>
+          <div class="swatch" style="background:#287271"></div>
+        </div>
+        <span class="palette-name">Ocean Sunset</span>
+      </div>
+      <div class="palette-item">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#5B8C5A"></div>
+          <div class="swatch" style="background:#4A6FA5"></div>
+          <div class="swatch" style="background:#C17C74"></div>
+          <div class="swatch" style="background:#7B6D8D"></div>
+          <div class="swatch" style="background:#D4A574"></div>
+          <div class="swatch" style="background:#4D8B8B"></div>
+        </div>
+        <span class="palette-name">Nordic Forest</span>
+      </div>
+      <div class="palette-item">
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#7EB8DA"></div>
+          <div class="swatch" style="background:#B5C99A"></div>
+          <div class="swatch" style="background:#E8A87C"></div>
+          <div class="swatch" style="background:#9B8EC1"></div>
+          <div class="swatch" style="background:#F2CC8F"></div>
+          <div class="swatch" style="background:#81B29A"></div>
+        </div>
+        <span class="palette-name">Pastel Garden</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ INSTALL ════════════ -->
+<section class="section" style="background: linear-gradient(180deg, transparent, rgba(42,157,143,0.02), transparent);">
+  <div class="container">
+    <div class="section-label reveal">Install</div>
+    <h2 class="reveal">Up and running in 30 seconds</h2>
+    <p class="section-desc reveal">No terminal needed.</p>
+
+    <div class="install-steps">
+      <div class="step-card reveal">
+        <h3>Download</h3>
+        <p>Grab <code>mindmap.skill</code> from the <a href="https://github.com/0x-man/mindmap-skill/releases/latest" style="color:var(--accent)">latest release</a>.</p>
+      </div>
+      <div class="step-card reveal">
+        <h3>Install</h3>
+        <p>Drag the file into any Claude chat. Or go to <strong>Settings → Profile → Custom Skills</strong> and upload it.</p>
+      </div>
+      <div class="step-card reveal">
+        <h3>Use</h3>
+        <p>Ask Claude to <em>"mind map this"</em> with any content — pasted text, an uploaded PDF, or just a topic.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ FOOTER ════════════ -->
+<footer>
+  <div class="container">
+    <p>Built with Claude · <a href="https://github.com/0x-man/mindmap-skill">GitHub</a> · MIT License</p>
+  </div>
+</footer>
+
+<!-- ════════════ SCROLL REVEAL ════════════ -->
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
