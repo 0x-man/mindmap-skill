@@ -17,9 +17,13 @@ zoomable, and follow established mind map best practices for clarity and recall.
 
 ## When You Receive a Request
 
-1. **Read the reference** at `references/mindmap-best-practices.md` for design principles
-2. **Analyze the input content** — extract the core topic and 4–7 main branches
-3. **Generate the React artifact** following the template pattern below
+1. **First mind map in a conversation**: Read `references/mindmap-best-practices.md` for
+   design principles and `references/export-patterns.md` for export code patterns.
+2. **Follow-up requests in the same conversation** (e.g., "expand this branch", "switch
+   palette", "export as PNG"): Skip reading the reference files — they're already in
+   context. Go straight to the change.
+3. **Analyze the input content** — extract the core topic and 4–7 main branches
+4. **Generate the React artifact** following the template pattern below
 
 ## Content Analysis Strategy
 
@@ -389,41 +393,18 @@ functions receive full `layout.nodes`, not the filtered visible subset.
 
 ## Quality Checklist
 
-Before finalizing, verify:
+Quick final scan — only the items easy to miss. If the prose instructions above were
+followed, most quality issues are already handled.
 
-- [ ] Central topic is concise (2–5 words)
-- [ ] 4–7 main branches, no more
-- [ ] Each branch has 2–5 sub-items
-- [ ] No node label exceeds 5 words (compress ruthlessly)
+- [ ] No node label exceeds 5 words (the most common violation — compress harder)
+- [ ] 4–7 main branches, each with 2–5 sub-items (count them)
 - [ ] Every main branch has an emoji prefix
-- [ ] Colors are distinct and harmonious
-- [ ] Curved connections, not straight lines
-- [ ] Connections anchor at pill edges, not node centers — no line overlaps text
+- [ ] Connections anchor at pill edges — no line overlaps any text
 - [ ] All text labels fit within their pill with visible padding on both sides
-- [ ] Pan/zoom works
-- [ ] Collapse/expand works on branch nodes
-- [ ] No text overlaps at default zoom
-- [ ] Export buttons (SVG, PNG, PDF, MD, Mermaid) are present and functional
-- [ ] Export captures full map regardless of collapse state
-- [ ] Exported SVG renders correctly when opened standalone (no missing fonts or CSS vars)
-- [ ] Exported PNG is crisp at 2× resolution
-- [ ] Mermaid export parses correctly in mermaid.live
-- [ ] Embed HTML export produces a working standalone file under 30KB
-- [ ] Embed button copies iframe snippet to clipboard
-- [ ] If input had identifiable sources, nodes are tagged and sources listed in footer
-- [ ] Branch balance: no branch has fewer than 2 or more than 5 sub-items
-- [ ] Inquiry nodes (❓) added only where gaps are genuine, not decorative
-- [ ] Contradictions marked with ⚡ and red dashed connector, not silently resolved
-- [ ] Cross-links limited to 3–4 max, each adds non-obvious insight
-- [ ] Hover tooltip renders at a fixed position (top-left), not following the cursor
+- [ ] No text overlaps at default zoom (zoom out and check)
 - [ ] Reading mode detail text truncates at word boundaries, never mid-word
-- [ ] Progressive disclosure toggle switches between map mode and reading mode
-- [ ] Focus mode isolates a branch and fades the rest to ~8% opacity
-- [ ] Focus mode "Back to full map" button works correctly
-- [ ] Semantic grouping: related branches are adjacent on the circle
-- [ ] Palette selector present with 4 named palettes; switching updates all colors reactively
-- [ ] Fullscreen toggle (⛶) works; Escape key exits; body scroll locked while active
-- [ ] Weighted nodes are subtly larger, not cartoonishly oversized
+- [ ] Contradictions and inquiry nodes are genuine, not decorative
+- [ ] Cross-links limited to 3–4 max
 - [ ] The map tells a coherent story you could present to someone
 
 ## Edge Cases
