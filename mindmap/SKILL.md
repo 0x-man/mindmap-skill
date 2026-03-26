@@ -419,13 +419,80 @@ followed, most quality issues are already handled.
   flag the imbalance after generating: "Branches X and Y are thinner because the source
   material doesn't cover them in detail. Want me to research those further?"
 - **Non-English input**: Generate the mind map in the same language as the input.
-- **Request to update an existing map**: If the user wants to modify a previously generated map,
-  regenerate the full artifact with the requested changes applied.
+
+## Conversational Editing
+
+After the first mind map is generated, users will often want to refine it through
+conversation. This is the most common interaction pattern — and the most important to
+get right. The goal: make edits feel instant and cheap, not like starting over.
+
+### Core Principle
+
+The `mindmapData` object is the single source of truth. On edit requests, change the
+data object and regenerate the artifact. The entire rendering engine, export functions,
+interaction layer, and UI code stay identical — only the data block at the top of the
+file changes. This means the "expensive" part (the engine) is copy-pasted unchanged,
+and only the "cheap" part (the data) is rewritten.
+
+Do NOT re-analyze the original source content. Do NOT re-read the reference files.
+The map's current structure is the starting point — apply the requested change to it.
+
+### Recognizing Edit Intent
+
+Map natural language to one of these operations:
+
+| User says (examples) | Operation | What changes in data |
+|---|---|---|
+| "Add X under Y" / "include X" | **Add node** | New child in target branch's `children` array |
+| "Remove X" / "delete the Z branch" | **Remove node** | Delete from `children` + remove any cross-links referencing it |
+| "Move X to Y" / "X belongs under Y" | **Move node** | Remove from old parent, add to new parent |
+| "Rename X to Y" / "change the label" | **Relabel** | Update `label` field |
+| "Merge X and Y" | **Merge branches** | Combine children into one branch, pick the better label |
+| "Split X into two" | **Split branch** | Create two branches, redistribute children logically |
+| "Expand X" / "more detail on X" | **Deepen branch** | Add 2–4 sub-items using your knowledge or the original source |
+| "Simplify" / "too much detail" | **Prune** | Remove depth-3 nodes, merge thin branches |
+| "Link X to Y" / "these are related" | **Add cross-link** | Add entry to `crossLinks` array |
+| "Change palette to Z" | **Palette swap** | Change the default palette name constant |
+| "Change the style" / "make it darker" | **Visual tweak** | Adjust central node color, palette, or layout constants |
+| "Add source for X" | **Attribution** | Add to `sources` array + set `sourceId` on the node |
+
+### Edit Response Pattern
+
+When handling an edit request:
+
+1. **State the change** in one sentence: "I've moved 'Social Media' from Enemies to Training
+   and added it as a sub-branch of 'Embrace boredom'."
+2. **Regenerate the artifact** with the updated `mindmapData` object. Copy the entire
+   rendering engine unchanged — only the data block at the top differs.
+3. **Don't re-explain the map**. The user already knows what it contains. Don't list all
+   branches, don't re-describe features, don't re-offer to adjust.
+
+### Handling Ambiguous Edits
+
+If the user's request is unclear (e.g., "fix the structure"), make your best interpretation
+and execute it, then briefly explain what you changed and why. Don't ask for clarification
+before acting — show them the result and let them redirect if needed.
+
+If an edit would break a structural rule (e.g., merging would leave a branch with 7+
+items), do the edit but flag the violation: "I merged those, but the branch now has 8
+sub-items — want me to split it?"
+
+### Multi-Edit Turns
+
+Users sometimes request several changes at once: "Move X to Y, rename Z, and add a
+branch for W." Handle all changes in a single artifact regeneration — don't generate
+intermediate versions. List each change briefly in your response.
 
 ## Example Output Pattern
 
 When responding to the user:
 
+**First generation:**
 1. Briefly explain what structure you extracted (1–2 sentences)
 2. Generate the React artifact
 3. Offer to adjust: "Want me to expand any branch, change the structure, or adjust the visual style?"
+
+**Subsequent edits:**
+1. State what you changed (1 sentence)
+2. Regenerate the artifact with updated data
+3. Stop. Don't re-describe the map.
