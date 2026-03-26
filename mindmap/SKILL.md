@@ -323,15 +323,20 @@ Read `references/export-patterns.md` for complete code patterns. Summary of what
 - **PDF**: Opens browser print dialog with landscape layout for true vector output
 - **Mermaid**: Generates `.mermaid` text compatible with Obsidian, GitHub, mermaid.live
 - **Markdown**: Generates `.md` outline with heading hierarchy and source footnotes
+- **Embed HTML**: Generates a single self-contained `.html` file with a vanilla JS mind
+  map engine, the full data structure, and all interactivity (pan, zoom, collapse, palette
+  switching, tooltips). The file has zero external dependencies and can be hosted anywhere
+  (GitHub Pages, S3, Netlify, personal site) or embedded via `<iframe>`. On click, it
+  also copies an iframe snippet to the clipboard and flashes confirmation.
 
 **Critical font rule for exports**: The in-browser rendering uses `system-ui` which always
 resolves. But exported SVGs must use `Arial, Helvetica, 'Segoe UI', Roboto, sans-serif` —
 system-ui and -apple-system resolve to nothing on Android, Windows PDF viewers, and most
 non-browser contexts. This is handled in the `prepareSvgForExport` function.
 
-**Export button UI**: Two groups in the control bar separated by dividers.
-Visual exports: SVG, PNG, PDF. Interchange exports: MD, MMD. Flash a ✓ for 1.5s on click.
-Filename = slugified central topic.
+**Export button UI**: Three groups in the control bar separated by dividers.
+Visual exports: SVG, PNG, PDF. Interchange exports: MD, MMD. Embed: a `</>` button.
+Flash a ✓ for 1.5s on click. Filename = slugified central topic.
 
 **Expand before export**: Always export ALL nodes including collapsed ones. The export
 functions receive full `layout.nodes`, not the filtered visible subset.
@@ -355,6 +360,8 @@ Before finalizing, verify:
 - [ ] Exported SVG renders correctly when opened standalone (no missing fonts or CSS vars)
 - [ ] Exported PNG is crisp at 2× resolution
 - [ ] Mermaid export parses correctly in mermaid.live
+- [ ] Embed HTML export produces a working standalone file under 30KB
+- [ ] Embed button copies iframe snippet to clipboard
 - [ ] If input had identifiable sources, nodes are tagged and sources listed in footer
 - [ ] Branch balance: no branch has fewer than 2 or more than 5 sub-items
 - [ ] Inquiry nodes (❓) added only where gaps are genuine, not decorative
