@@ -14,6 +14,7 @@ Feed it any content and it produces a **React artifact** with:
 - **Source attribution** with clickable 🔗 links on individual nodes and a footer reference list
 - **4 color palettes** switchable at runtime via 🎨 selector
 - **7 export formats**: SVG, PNG, PDF, Markdown, Mermaid, embeddable HTML
+- **Conversational editing**: add, remove, move, rename, merge, split nodes through natural language — no full regeneration needed
 
 ## Installation
 
@@ -59,6 +60,7 @@ Just ask Claude to make a mind map:
 | Source linking | 🔗 on hover opens source URL; footer shows numbered reference list |
 | Embed export | `</>` button downloads a self-contained HTML file and copies an iframe snippet |
 | Edge anchoring | Connectors start/end at pill edges, not node centers — no text overlap |
+| Conversational editing | "Add X under Y", "move Z", "merge these two" — surgical updates without regenerating from scratch |
 
 ## Token Usage Estimates
 
