@@ -238,8 +238,10 @@ const mindmapData = {
 
 **Field reference:**
 - `detail` (string, optional): A 1–2 sentence expansion of the keyword label. Shown in
-  a tooltip on hover. Solves the tension between the 5-word label limit and the user's
-  need for context. Only add when the compressed label genuinely loses important nuance.
+  the fixed tooltip on hover, and inline beneath the node in reading mode. When rendered
+  inline, always truncate at word boundaries — never cut mid-word. If the text exceeds
+  ~80 characters, find the last space before the limit and append "…". Only add detail
+  when the compressed label genuinely loses important nuance.
 - `weight` (number 1–5, optional): How many sources mention this concept. Affects pill
   size and font boldness. Omit for single-source or knowledge-based maps.
 - `type: "inquiry"` (optional): Marks a gap node. Renders with dashed border and ❓ prefix.
@@ -269,15 +271,22 @@ fabricate references.
    - Zoom: mouse wheel or +/- buttons
    - Collapse/expand: click a branch node to toggle its children
    - Hover: subtle scale-up (1.05x) and shadow on nodes
-   - **Hover tooltip**: If a node has a `detail` field, show a floating tooltip card near
-     the node on hover. Style it as a small white card with subtle shadow, max-width 220px,
-     font-size 11px. Position it offset from the node so it doesn't obscure the label.
-     The tooltip should feel like a footnote — informative but unobtrusive.
+   - **Hover tooltip**: If a node has a `detail` field, show a floating tooltip card
+     positioned at a FIXED location (e.g., top-left of the canvas at `position: absolute;
+     top: 12px; left: 12px`), not near the node itself. This prevents the tooltip from
+     overlapping the map or flickering as the mouse moves. Style it as a card with subtle
+     shadow, max-width 280px, font-size 12px, good line-height (1.5). Show the node label
+     as a colored header, then the detail text as body copy, then the source if present.
    - **Progressive disclosure toggle**: A "Details" button in the control bar toggles
-     between two modes: (a) *Map mode* (default) — keyword labels only, detail shown on
-     hover; (b) *Reading mode* — detail text rendered beneath each node label in a smaller
-     font (9–10px, muted color, max-width matched to pill). This lets the map function as
-     both a visual overview and a readable summary without generating two separate outputs.
+     between two modes: (a) *Map mode* (default) — keyword labels only, detail shown in
+     the fixed tooltip on hover; (b) *Reading mode* — detail text rendered beneath each
+     node label. In reading mode, render detail text using `foreignObject` with these rules:
+     - **Truncate at word boundaries**, never mid-word. Use a helper like:
+       `text.split(' ').reduce((acc, w) => (acc + ' ' + w).length <= limit ? acc + ' ' + w : acc, '').trim() + '…'`
+     - Max ~12 words or ~80 characters, whichever is shorter
+     - Style: 9px font, muted color (#888), `line-height: 1.3`, `text-align: center`
+     - Give the foreignObject a `width` matching the pill width and a fixed `height: 40px`
+     - Position it `y = h/2 + 6` (a clear gap below the pill, not flush against it)
      When reading mode is active, the layout should expand the vertical spacing between
      sub-branches by ~30% to make room for the detail text.
    - **Focus mode (branch isolation)**: Each main branch node gets a small ◎ icon that
@@ -351,7 +360,8 @@ Before finalizing, verify:
 - [ ] Inquiry nodes (❓) added only where gaps are genuine, not decorative
 - [ ] Contradictions marked with ⚡ and red dashed connector, not silently resolved
 - [ ] Cross-links limited to 3–4 max, each adds non-obvious insight
-- [ ] Hover tooltips show `detail` text where present, without obscuring the map
+- [ ] Hover tooltip renders at a fixed position (top-left), not following the cursor
+- [ ] Reading mode detail text truncates at word boundaries, never mid-word
 - [ ] Progressive disclosure toggle switches between map mode and reading mode
 - [ ] Focus mode isolates a branch and fades the rest to ~8% opacity
 - [ ] Focus mode "Back to full map" button works correctly
