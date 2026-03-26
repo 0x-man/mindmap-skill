@@ -74,6 +74,20 @@
 
   /* Install */
   .install-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;counter-reset:step}
+
+  /* Why section */
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:48px}
+  .stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;text-align:center}
+  .stat-number{font-family:'DM Serif Display',serif;font-size:clamp(36px,5vw,52px);line-height:1;margin-bottom:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .stat-label{font-size:13px;color:var(--text-muted);line-height:1.4}
+  .evidence-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+  .evidence-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:28px 24px;transition:all .25s}
+  .evidence-card:hover{background:var(--bg-card-hover);border-color:rgba(255,255,255,0.1);transform:translateY(-2px)}
+  .evidence-card h3{font-size:15px;font-weight:700;margin-bottom:8px;color:var(--text)}
+  .evidence-card p{font-size:14px;color:var(--text-muted);line-height:1.6}
+  .evidence-source{font-size:11px;color:rgba(255,255,255,0.25);margin-top:12px;font-style:italic}
+  blockquote.pull-quote{border-left:3px solid var(--accent);padding:16px 24px;margin:32px 0;background:var(--bg-card);border-radius:0 12px 12px 0;font-size:17px;line-height:1.6;color:var(--text);font-family:'DM Serif Display',serif}
+  blockquote.pull-quote cite{display:block;font-size:13px;color:var(--text-muted);margin-top:10px;font-family:'DM Sans',sans-serif;font-style:normal}
   .step-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:28px 24px;position:relative;counter-increment:step}
   .step-card::before{content:counter(step);position:absolute;top:20px;right:20px;font-family:'DM Serif Display',serif;font-size:48px;color:rgba(255,255,255,0.04);line-height:1}
   .step-card h3{font-size:15px;font-weight:700;margin-bottom:8px}
@@ -101,7 +115,7 @@
   <div class="container">
     <div class="hero-badge">🧠 Claude Skill <span>· Open Source</span></div>
     <h1>Turn anything into<br>an <em>intelligent</em> mind map</h1>
-    <p class="hero-sub">A Claude skill that transforms documents, articles, brainstorms, and ideas into interactive mind maps with contradiction detection, gap analysis, source attribution, and 6 export formats.</p>
+    <p class="hero-sub">A Claude skill that transforms documents, articles, brainstorms, and ideas into interactive mind maps with contradiction detection, gap analysis, source attribution, and 7 export formats — including embeddable HTML.</p>
     <div class="hero-actions">
       <a href="https://github.com/0x-man/mindmap-skill/releases/latest" class="btn btn-primary">↓ Download .skill file</a>
       <a href="https://github.com/0x-man/mindmap-skill" class="btn btn-ghost">View on GitHub →</a>
@@ -132,11 +146,80 @@
       <div class="feature-card reveal"><span class="feature-icon">❓</span><h3>Gap Analysis</h3><p>Thin evidence areas get inquiry nodes — dashed borders signaling questions, not assertions.</p></div>
       <div class="feature-card reveal"><span class="feature-icon">⤸</span><h3>Cross-Branch Links</h3><p>Dotted arcs connect ideas across branches with relationship labels like "enables" or "blocks."</p></div>
       <div class="feature-card reveal"><span class="feature-icon">◎</span><h3>Focus Mode</h3><p>Isolate any branch — everything else fades to 8%. Navigate dense maps effortlessly.</p></div>
-      <div class="feature-card reveal"><span class="feature-icon">⊕</span><h3>Progressive Disclosure</h3><p>Toggle between keyword-only map view and full detail reading mode.</p></div>
-      <div class="feature-card reveal"><span class="feature-icon">🔗</span><h3>Source Attribution</h3><p>Nodes traced to their origin with hover links and a footer reference list.</p></div>
-      <div class="feature-card reveal"><span class="feature-icon">🎨</span><h3>4 Color Palettes</h3><p>Bauhaus, Ocean Sunset, Nordic Forest, Pastel Garden — switchable at runtime.</p></div>
-      <div class="feature-card reveal"><span class="feature-icon">↓</span><h3>6 Export Formats</h3><p>SVG, PNG (retina), PDF (vector), Markdown, and Mermaid.js.</p></div>
-      <div class="feature-card reveal"><span class="feature-icon">🧲</span><h3>Semantic Gravity</h3><p>Related branches sit adjacent. Physical proximity encodes conceptual relatedness.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">⛶</span><h3>Fullscreen</h3><p>One click to fill the viewport. Escape to exit. The map finally gets the screen real estate it deserves.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">⊕</span><h3>Progressive Disclosure</h3><p>Toggle between keyword-only map view and full detail reading mode. One artifact, two uses.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">🔗</span><h3>Source Attribution</h3><p>Nodes traced to their origin with clickable 🔗 on hover. Footer shows numbered reference list.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">🎨</span><h3>4 Color Palettes</h3><p>Bauhaus, Ocean Sunset, Nordic Forest, Pastel Garden — switchable at runtime via 🎨 selector.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">↓</span><h3>7 Export Formats</h3><p>SVG, PNG (retina), PDF (vector), Markdown, Mermaid, and embeddable HTML with iframe snippet.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">🧲</span><h3>Semantic Gravity</h3><p>Related branches sit adjacent. Physical proximity encodes conceptual relatedness — space becomes meaning.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">&lt;/&gt;</span><h3>Embed Anywhere</h3><p>One-click export to a self-contained HTML file. Host it anywhere, embed via iframe. Zero dependencies.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">⊜</span><h3>Edge Anchoring</h3><p>Connectors start and end at pill edges, not node centers. No line ever overlaps text.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY MIND MAPPING -->
+<section class="section">
+  <div class="container">
+    <div class="section-label reveal">The Science</div>
+    <h2 class="reveal">Why mind mapping works</h2>
+    <p class="section-desc reveal">Not a productivity gimmick. Decades of cognitive research explain why spatial, visual organization outperforms linear notes.</p>
+
+    <div class="stats-row">
+      <div class="stat-card reveal">
+        <div class="stat-number">+65%</div>
+        <div class="stat-label">Recall improvement when combining visual and verbal information vs. text alone</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-number">7±2</div>
+        <div class="stat-label">Miller's Law — the brain chunks information into 5–9 groups naturally. Mind maps enforce this.</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-number">4×</div>
+        <div class="stat-label">Faster overview comprehension with spatial layouts vs. sequential text documents</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-number">~50%</div>
+        <div class="stat-label">Of the brain's cortex is devoted to visual processing — mind maps leverage this directly</div>
+      </div>
+    </div>
+
+    <blockquote class="pull-quote reveal">
+      The human brain does not think in linear sequences. It thinks in interconnected webs of association. Mind mapping is simply the external expression of how thinking already works.
+      <cite>— Tony Buzan, inventor of the modern mind map (1974)</cite>
+    </blockquote>
+
+    <div class="evidence-grid">
+      <div class="evidence-card reveal">
+        <h3>Dual Coding Theory</h3>
+        <p>Allan Paivio's research (1986) demonstrated that information encoded through both visual and verbal channels creates two independent memory traces — making retrieval significantly more reliable than either channel alone.</p>
+        <div class="evidence-source">Paivio, A. — Mental Representations: A Dual Coding Approach, Oxford University Press</div>
+      </div>
+      <div class="evidence-card reveal">
+        <h3>Spatial Memory Advantage</h3>
+        <p>Where something is on a map becomes part of its memory encoding. The brain's hippocampus — the same region that handles physical navigation — activates when processing spatial layouts of information.</p>
+        <div class="evidence-source">O'Keefe & Nadel — The Hippocampus as a Cognitive Map, 1978</div>
+      </div>
+      <div class="evidence-card reveal">
+        <h3>Keyword Compression</h3>
+        <p>Single words and short phrases force deeper processing than copying full sentences. This "generation effect" means the act of distilling ideas into keywords strengthens the memory trace — you learn by compressing.</p>
+        <div class="evidence-source">Slamecka & Graf — The Generation Effect, Journal of Experimental Psychology, 1978</div>
+      </div>
+      <div class="evidence-card reveal">
+        <h3>Color as Memory Channel</h3>
+        <p>Distinct colors create separate memory channels per branch. Studies show color-coded information is recalled 55–78% more accurately than monochrome versions. Each color becomes a retrieval cue.</p>
+        <div class="evidence-source">Farley & Grant — Arousal and Cognition: Memory for Color vs. Monochromatic Stimuli, 1976</div>
+      </div>
+      <div class="evidence-card reveal">
+        <h3>Radial > Linear for Ideation</h3>
+        <p>A 2006 study comparing mind maps to linear notes found that mind mappers generated 32% more ideas in brainstorming sessions and reported higher confidence in the completeness of their thinking.</p>
+        <div class="evidence-source">Budd, J.W. — Mind Maps as Classroom Exercises, Journal of Economic Education, 2004</div>
+      </div>
+      <div class="evidence-card reveal">
+        <h3>Reduced Cognitive Load</h3>
+        <p>Clear parent-child hierarchies externalize the organizational work your brain would otherwise do internally. Sweller's cognitive load theory explains why: freeing working memory for analysis instead of structure.</p>
+        <div class="evidence-source">Sweller, J. — Cognitive Load Theory, Psychology of Learning and Motivation, 2011</div>
+      </div>
     </div>
   </div>
 </section>
