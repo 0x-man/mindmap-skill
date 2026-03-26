@@ -161,7 +161,27 @@ and cross-link label colors update reactively. The central node stays fixed.
 - Use curved paths (quadratic Bézier curves), not straight lines
 - Line thickness decreases with depth: 3px → 2px → 1.5px → 1px
 - Lines inherit the color of their parent branch (with slight opacity reduction at depth)
-- Lines connect from parent edge to child edge, not center-to-center
+
+**Edge anchoring (critical):** Lines must connect from the pill edge of the parent to the
+pill edge of the child — never center-to-center, as that causes lines to overlap with text.
+Compute the anchor point by intersecting a ray from the parent center toward the child
+center with the parent's pill boundary. For a pill of half-width `hw` and half-height `hh`:
+
+```javascript
+function edgePoint(cx, cy, hw, hh, targetX, targetY) {
+  const dx = targetX - cx, dy = targetY - cy;
+  const angle = Math.atan2(dy, dx);
+  // Pill = rectangle with semicircle caps; approximate with ellipse intersection
+  const ex = hw * Math.cos(angle);
+  const ey = hh * Math.sin(angle);
+  const scale = Math.min(hw / (Math.abs(ex) || 1), hh / (Math.abs(ey) || 1));
+  return { x: cx + ex * scale, y: cy + ey * scale };
+}
+```
+
+Use `edgePoint` for both the start (parent → child direction) and end (child → parent
+direction) of each curve. The Bézier control point stays at the midpoint with the usual
+perpendicular offset.
 
 ### Node Styling
 
@@ -170,6 +190,32 @@ and cross-link label colors update reactively. The central node stays fixed.
 - Sub-branch nodes: smaller pills, lighter background
 - Detail nodes: just text with a subtle left border (no background)
 - Add a relevant emoji prefix to each main branch for quick visual scanning
+
+**Text containment (critical):** Text must never extend beyond its pill. Compute pill
+width from the actual text measurement, not a character-count estimate:
+
+```javascript
+// Measure text width accurately using a temporary SVG element
+function measureText(label, fontSize, fontWeight) {
+  const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  t.setAttribute('font-size', fontSize);
+  t.setAttribute('font-weight', fontWeight);
+  t.style.fontFamily = 'system-ui, -apple-system, sans-serif';
+  t.textContent = label;
+  svg.appendChild(t);  // append to the live SVG so the browser computes the bbox
+  const w = t.getBBox().width;
+  svg.removeChild(t);
+  return w;
+}
+```
+
+Then set pill width = `measuredTextWidth + padding`, where padding is at least 28px
+per side for depth-0, 20px for depth-1, and 16px for depth-2. This guarantees the
+text fits regardless of font rendering differences across platforms.
+
+If `measureText` is not feasible (e.g., layout runs before SVG mount), use a conservative
+character-width estimate of `fontSize * 0.62` per character (not 0.55, which clips on
+wider glyphs like "W", "M", emojis). Always add the per-side padding on top.
 
 **Weighted nodes** (`weight` field present): Scale the pill width by `1 + (weight - 1) * 0.06`
 and bump font-weight up one step (400→500, 500→600). This creates a subtle visual hierarchy
@@ -352,6 +398,8 @@ Before finalizing, verify:
 - [ ] Every main branch has an emoji prefix
 - [ ] Colors are distinct and harmonious
 - [ ] Curved connections, not straight lines
+- [ ] Connections anchor at pill edges, not node centers — no line overlaps text
+- [ ] All text labels fit within their pill with visible padding on both sides
 - [ ] Pan/zoom works
 - [ ] Collapse/expand works on branch nodes
 - [ ] No text overlaps at default zoom
