@@ -180,3 +180,77 @@ detail than another is normal — that's what weight is for.
 Keep labels to 1–2 words. Common patterns: "enables", "blocks", "requires", "similar to",
 "opposite of", "part of", "leads to", "competes with". The label should make the
 relationship self-explanatory without needing the surrounding context.
+
+## Keyword Compression
+
+The 5-word label limit is the single most violated rule. The problem isn't that Claude
+can't count to five — it's that compressing a nuanced idea into a scannable keyword
+is a learned craft, not an obvious operation. This section teaches it by example.
+
+### Compression Principles
+
+1. **Delete the verb.** Most ideas can be expressed as noun phrases. "The process of
+   managing distributed systems" → "Distributed systems mgmt"
+2. **Cut articles and prepositions.** "The impact of inflation on savings" → "Inflation
+   erodes savings"
+3. **Use symbols when obvious.** "is greater than" → ">", "leads to" → "→", "versus" → "vs"
+4. **Prefer the specific over the abstract.** "Various types of risk" → "Market + credit risk"
+5. **Use the field's own jargon.** Experts scan faster when they see domain terms.
+   "The process of making things smaller" → "Minification" (in web dev context)
+6. **Put the most important word first.** Scanners read the first word and skip the rest
+   if it doesn't match. "Global supply chain disruption" → "Supply chain disruption"
+   (not "Disruption of supply chains")
+7. **Move nuance to the `detail` field.** The label is a headline; the detail is the
+   paragraph. If compression loses critical meaning, that's what `detail` is for.
+
+### Before/After Examples
+
+Study these. The pattern is: verbose input → compressed label (+ detail field when nuance matters).
+
+**Business & Strategy:**
+| Input | Label | Detail (if needed) |
+|-------|-------|--------------------|
+| The company's annual revenue has been declining for three consecutive years | Revenue declining 3 yrs | |
+| Customers are increasingly switching to competitor products | Customer churn rising | |
+| The organization needs to reduce operational costs by at least 20% | Cut opex ≥20% | |
+| Establishing strategic partnerships with key industry players | Strategic partnerships | |
+| The risk of regulatory changes affecting our core business model | Regulatory risk to model | Specific regulations could restrict core revenue streams |
+
+**Technology:**
+| Input | Label | Detail (if needed) |
+|-------|-------|--------------------|
+| The application programming interface that connects the frontend to the backend | Frontend ↔ Backend API | |
+| Implementing continuous integration and continuous deployment pipelines | CI/CD pipeline | |
+| The system experienced a 99.9% uptime rate over the past quarter | 99.9% uptime (Q3) | |
+| Migrating the existing infrastructure from on-premises servers to cloud-based solutions | On-prem → cloud migration | |
+| The technical debt accumulated from years of rapid feature development | Tech debt accumulation | Years of shipping features without refactoring |
+
+**Science & Research:**
+| Input | Label | Detail (if needed) |
+|-------|-------|--------------------|
+| The experiment demonstrated a statistically significant correlation between variables | Significant correlation found | p < 0.05 across all treatment groups |
+| The process by which the body's immune system attacks its own healthy tissue | Autoimmune response | |
+| Carbon dioxide concentrations in the atmosphere have reached 420 parts per million | CO₂ at 420 ppm | |
+| The phenomenon where observation changes the behavior of the thing being observed | Observer effect | |
+| Neurons that fire together strengthen their synaptic connections over time | Hebbian learning | "Neurons that fire together wire together" |
+
+**Finance & Economics:**
+| Input | Label | Detail (if needed) |
+|-------|-------|--------------------|
+| The Federal Reserve's decision to maintain interest rates at their current level | Fed holds rates steady | |
+| Government debt as a percentage of gross domestic product has reached 100% | Debt ~100% of GDP | |
+| The yield curve has inverted, which historically precedes economic recessions | Yield curve inverted | Historically precedes recession by 12–18 months |
+| Investors are moving capital from equities into safer fixed-income instruments | Flight to bonds | Risk-off sentiment driving equity outflows |
+| The annual rate at which the general level of prices for goods and services is rising | Inflation rate | |
+
+### Common Compression Failures
+
+These patterns produce bad labels — watch for them:
+
+| Failure | Example | Why it's bad | Better |
+|---------|---------|-------------|--------|
+| Just truncating | "The process of mana…" | Unreadable | "Process management" |
+| Too abstract | "Key considerations" | Says nothing | "Cost vs speed tradeoff" |
+| Redundant with parent | Parent: "Risks", Child: "Risk factors" | Wastes a node | "Market volatility" |
+| Counting words wrong | "CI/CD pipeline setup and config" (6 words) | Over limit | "CI/CD setup" |
+| Emoji overuse | "🔥💰📈 Revenue growth" | Cluttered | "📈 Revenue growth" (one per branch, not per node) |
