@@ -15,6 +15,7 @@ Feed it any content and it produces a **React artifact** with:
 - **4 color palettes** switchable at runtime via 🎨 selector
 - **7 export formats**: SVG, PNG, PDF, Markdown, Mermaid, embeddable HTML
 - **Conversational editing**: add, remove, move, rename, merge, split nodes through natural language — no full regeneration needed
+- **Adaptive layout**: auto-selects radial, semi-circular, top-down tree, or left-to-right flow based on content shape — or override manually
 
 ## Installation
 
@@ -30,10 +31,11 @@ Feed it any content and it produces a **React artifact** with:
 
 ```
 mindmap/
-├── SKILL.md                              # Core instructions (450 lines)
+├── SKILL.md                              # Core instructions (498 lines)
 └── references/
-    ├── mindmap-best-practices.md         # Cognitive science, palettes, intelligence patterns
-    └── export-patterns.md               # SVG/PNG/PDF/Mermaid/Markdown/Embed export code
+    ├── mindmap-best-practices.md         # Cognitive science, palettes, keyword compression
+    ├── export-patterns.md               # SVG/PNG/PDF/Mermaid/Markdown/Embed export code
+    └── layout-engine.md                 # 4 layout algorithms (radial, semicircle, tree, flow)
 ```
 
 ## Usage
@@ -61,6 +63,7 @@ Just ask Claude to make a mind map:
 | Embed export | `</>` button downloads a self-contained HTML file and copies an iframe snippet |
 | Edge anchoring | Connectors start/end at pill edges, not node centers — no text overlap |
 | Conversational editing | "Add X under Y", "move Z", "merge these two" — surgical updates without regenerating from scratch |
+| Adaptive layout | Auto-selects radial, semi-circular, tree, or flow layout based on content. "Make it a tree" to override. |
 
 ## Token Usage Estimates
 
@@ -68,16 +71,17 @@ Mind map generation is a single-turn operation. Here's what to expect:
 
 | Component | First map | Follow-ups |
 |-----------|-----------|------------|
-| **Input: SKILL.md** (always loaded) | ~4,900 | ~4,900 |
-| **Input: best-practices reference** | ~1,500 | — (skipped) |
+| **Input: SKILL.md** (always loaded) | ~5,700 | ~5,700 |
+| **Input: best-practices reference** | ~2,700 | — (skipped) |
 | **Input: export-patterns reference** | ~1,400 | — (skipped) |
+| **Input: layout-engine reference** | ~1,500 | — (skipped) |
 | **Input: your content** (text/PDF) | 1,000–5,000 | 200–1,000 |
 | **Input: system prompt overhead** | ~1,000 | ~1,000 |
 | **Output: response + artifact** | ~5,500 | ~3,000 |
 | | | |
-| **Total** | **~15,000–19,000** | **~9,000–10,000** |
+| **Total** | **~19,000–23,000** | **~10,000–11,000** |
 
-**In practice:** The first map in a conversation costs roughly one mid-length Claude response. Follow-ups ("expand this branch", "switch palette", "export as PNG") are ~40% cheaper because the reference files are already in context and the skill skips reloading them. On Claude Pro, this is well within normal usage. On the API, expect ~$0.05–0.12 per first map and ~$0.03–0.06 per follow-up.
+**In practice:** The first map in a conversation loads all four reference files (~5,600 tokens combined), but follow-ups skip them entirely — saving ~55% on edits like "expand this branch" or "switch to tree layout". On Claude Pro, this is well within normal usage. On the API, expect ~$0.06–0.15 per first map and ~$0.03–0.06 per follow-up.
 
 **What affects cost:**
 - Longer input documents → more input tokens (but output stays ~5K regardless — the skill compresses aggressively)
