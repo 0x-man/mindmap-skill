@@ -102,27 +102,22 @@ when the relationship is non-obvious and adds real insight.
 
 ## Visual Design Specifications
 
-### Layout: Semantic Radial Tree
+### Layout
 
-Nodes radiate outward from a central topic. Main branches are distributed around the center,
-but their angular positions are not purely mathematical — they encode meaning.
+Read `references/layout-engine.md` for the full layout algorithms. The skill supports
+four layout modes — the engine auto-selects based on content shape, but the user can
+override. Quick summary:
 
-**Semantic gravity**: Before assigning angles, sort branches so that conceptually related
-topics are adjacent on the circle. Think of the circle as a clock face where proximity
-implies relatedness. For example, in a "Machine Learning" map, "Supervised Learning" and
-"Unsupervised Learning" should sit next to each other, while "Hardware Requirements" belongs
-on the opposite side. In a business strategy map, "Revenue" and "Costs" are neighbors;
-"Company Culture" sits across from them.
+| Mode | When auto-selected | Shape |
+|------|-------------------|-------|
+| **Radial** (default) | 4–6 branches | Full circle, semantic gravity groups |
+| **Semi-circular** | 7+ branches | Half-circle arc, avoids overcrowding |
+| **Top-down tree** | Sequential content (processes, timelines) | Vertical hierarchy |
+| **Left-to-right flow** | Cause→effect, pipelines, workflows | Horizontal chain |
 
-To implement this, add a `group` integer field to each branch in the data structure.
-Branches with the same group number are placed adjacently. Within a group, order by
-conceptual flow (general → specific, cause → effect, or chronological). Between groups,
-add a slightly larger angular gap (1.3× the normal spacing) to create visual breathing
-room that reinforces the conceptual boundary.
-
-After grouping, calculate angles as:
-`baseAngle = (index / totalBranches) * 2π - π/2`
-Then apply the group gaps and a small random offset (±8°) to avoid mechanical uniformity.
+Add a `layout` field to `mindmapData` to force a mode: `"radial"`, `"semicircle"`,
+`"tree"`, or `"flow"`. Omit to auto-detect. The `group` field still works for semantic
+gravity in radial and semi-circular modes.
 
 ### Color System
 
@@ -261,6 +256,7 @@ Build a single self-contained `.jsx` file with:
 ```javascript
 const mindmapData = {
   central: "Topic Name",
+  layout: "radial",                        // optional: "radial"|"semicircle"|"tree"|"flow"|omit for auto
   sources: [                               // optional: reference sources
     { id: "s1", label: "Newport 2016", url: "https://..." },
     { id: "s2", label: "Wikipedia", url: "https://..." }
@@ -301,6 +297,7 @@ const mindmapData = {
   should have ⚡ prefixes. Renderer draws a red dashed line between them.
 - `sourceId` (string, optional): Links to a source in the `sources` array.
 - `crossLinks` (array, optional): Top-level inter-branch relationships. Max 3–4.
+- `layout` (string, optional): `"radial"`, `"semicircle"`, `"tree"`, `"flow"`. Omit for auto-detection. See `references/layout-engine.md`.
 
 Each branch also accepts:
 - `group` (integer, optional): Semantic grouping number. Branches with the same group are
@@ -314,7 +311,7 @@ The map footer should show a numbered source list when any sources exist. If the
 broad topic generated from your own knowledge, omit the sources array entirely — don't
 fabricate references.
 
-2. **Layout engine** — a function that computes (x, y) positions for every node using the radial algorithm described above. This runs once on mount and recalculates if the data changes.
+2. **Layout engine** — computes (x, y) positions using the auto-selected or user-specified layout mode. See `references/layout-engine.md` for all four algorithms.
 
 3. **SVG renderer** — draws connections (curved paths) and nodes (groups of rect + text). Uses the color system above.
 
@@ -457,6 +454,7 @@ Map natural language to one of these operations:
 | "Change palette to Z" | **Palette swap** | Change the default palette name constant |
 | "Change the style" / "make it darker" | **Visual tweak** | Adjust central node color, palette, or layout constants |
 | "Add source for X" | **Attribution** | Add to `sources` array + set `sourceId` on the node |
+| "Make it a tree" / "use flow layout" | **Layout switch** | Set `layout` field + recompute positions per `references/layout-engine.md` |
 
 ### Edit Response Pattern
 
