@@ -33,6 +33,8 @@ Before building the map, think carefully about structure:
 - **Main branches**: 4–7 primary categories. These are the "chapters" of the content.
   Too few = not useful. Too many = overwhelming. 5–6 is the sweet spot.
 - **Sub-branches**: 2–5 items per main branch. Use keywords, not full sentences.
+  See the Keyword Compression section in `references/mindmap-best-practices.md` for
+  20 before/after examples of how to compress well.
 - **Depth limit**: Go no deeper than 3 levels (central → branch → sub-branch → detail).
   Deeper trees lose the visual advantage of a mind map.
 
