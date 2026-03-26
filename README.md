@@ -64,24 +64,23 @@ Just ask Claude to make a mind map:
 
 Mind map generation is a single-turn operation. Here's what to expect:
 
-| Component | Tokens (approx) |
-|-----------|-----------------|
-| **Input: SKILL.md** (always loaded) | ~5,100 |
-| **Input: best-practices reference** (read on first use) | ~1,500 |
-| **Input: export-patterns reference** (read on first use) | ~1,400 |
-| **Input: your content** (the text/PDF being mapped) | 1,000–5,000 |
-| **Input: system prompt overhead** | ~1,000 |
-| **Output: response text** (brief explanation) | ~200 |
-| **Output: React artifact** (the mind map code) | ~5,000–5,500 |
-| | |
-| **Total per generation** | **~15,000–20,000** |
+| Component | First map | Follow-ups |
+|-----------|-----------|------------|
+| **Input: SKILL.md** (always loaded) | ~4,900 | ~4,900 |
+| **Input: best-practices reference** | ~1,500 | — (skipped) |
+| **Input: export-patterns reference** | ~1,400 | — (skipped) |
+| **Input: your content** (text/PDF) | 1,000–5,000 | 200–1,000 |
+| **Input: system prompt overhead** | ~1,000 | ~1,000 |
+| **Output: response + artifact** | ~5,500 | ~3,000 |
+| | | |
+| **Total** | **~15,000–19,000** | **~9,000–10,000** |
 
-**In practice:** A typical mind map costs roughly one mid-length Claude response. On Claude Pro, this is well within normal usage. On the API, expect ~$0.05–0.15 per map depending on your model and input length.
+**In practice:** The first map in a conversation costs roughly one mid-length Claude response. Follow-ups ("expand this branch", "switch palette", "export as PNG") are ~40% cheaper because the reference files are already in context and the skill skips reloading them. On Claude Pro, this is well within normal usage. On the API, expect ~$0.05–0.12 per first map and ~$0.03–0.06 per follow-up.
 
 **What affects cost:**
-- Longer input documents → more input tokens (but the output stays ~5K regardless — the skill compresses aggressively)
-- Asking for revisions ("expand this branch", "change the palette") costs less than the initial generation since the skill is already in context
-- The two reference files are only read on the first generation in a conversation — subsequent maps in the same chat skip them
+- Longer input documents → more input tokens (but output stays ~5K regardless — the skill compresses aggressively)
+- Follow-ups are significantly cheaper than the first generation
+- Asking for structural changes ("add a branch", "merge these two") regenerates the full artifact (~5K output); cosmetic changes ("change palette") are lighter
 
 ## License
 
