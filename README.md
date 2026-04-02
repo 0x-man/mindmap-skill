@@ -1,11 +1,11 @@
 # 🧠🗺️ Mind Map Generator — Claude Skill
 
 A Claude skill that generates interactive, visually polished mind maps from any content — text, documents, conversations, topics, brainstorms, or ideas.
-
+ 
 ## What It Does
-
+ 
 Feed it any content and it produces a **React artifact** with:
-
+ 
 - **Radial mind map** with semantic grouping (related branches sit adjacent)
 - **Interactive controls**: pan, zoom, collapse/expand, focus mode, fullscreen
 - **Content intelligence**: contradiction detection (⚡), gap analysis (❓), cross-branch links, frequency weighting
@@ -16,39 +16,48 @@ Feed it any content and it produces a **React artifact** with:
 - **7 export formats**: SVG, PNG, PDF, Markdown, Mermaid, embeddable HTML
 - **Conversational editing**: add, remove, move, rename, merge, split nodes through natural language — no full regeneration needed
 - **Adaptive layout**: auto-selects radial, semi-circular, top-down tree, or left-to-right flow based on content shape — or override manually
-
+- **Knowledge Atlas**: save maps across sessions, auto-detect shared concepts between them, and explore your growing knowledge graph as a force-directed network
+ 
 ## Installation
-
+ 
 ### Option A: Install the `.skill` file (easiest)
 1. Download `mindmap.skill` from the [Releases](../../releases) page
 2. Drag it into any Claude chat, or go to **Settings → Profile → Custom Skills** and upload it
-
+ 
 ### Option B: Manual install
 1. Clone this repo
 2. Copy the `mindmap/` folder to your Claude skills directory
-
+ 
 ## File Structure
-
+ 
 ```
 mindmap/
-├── SKILL.md                              # Core instructions (498 lines)
+├── SKILL.md                              # Core instructions (500 lines)
 └── references/
     ├── mindmap-best-practices.md         # Cognitive science, palettes, keyword compression
     ├── export-patterns.md               # SVG/PNG/PDF/Mermaid/Markdown/Embed export code
-    └── layout-engine.md                 # 4 layout algorithms (radial, semicircle, tree, flow)
+    ├── layout-engine.md                 # 4 layout algorithms (radial, semicircle, tree, flow)
+    └── atlas-storage.md                 # Persistent storage, atlas viewer, auto-linking
 ```
-
+ 
 ## Usage
-
+ 
 Just ask Claude to make a mind map:
-
+ 
 - *"Mind map this article"* (paste or upload content)
 - *"Map out the key concepts of machine learning"*
 - *"Turn this PDF into a visual summary"*
 - *"Visualize the structure of this meeting transcript"*
-
+ 
+Then build your knowledge graph over time:
+ 
+- *"Save this map"* — persists across sessions
+- *"Show my atlas"* — see all your maps as a connected network
+- *"Open my Deep Work map"* — reload a saved map
+- *"What connects to my crypto map?"* — discover cross-map links
+ 
 ## Features in Detail
-
+ 
 | Feature | What it does |
 |---------|-------------|
 | Semantic gravity | Groups related branches adjacent on the circle |
@@ -64,30 +73,32 @@ Just ask Claude to make a mind map:
 | Edge anchoring | Connectors start/end at pill edges, not node centers — no text overlap |
 | Conversational editing | "Add X under Y", "move Z", "merge these two" — surgical updates without regenerating from scratch |
 | Adaptive layout | Auto-selects radial, semi-circular, tree, or flow layout based on content. "Make it a tree" to override. |
-
+| Knowledge Atlas | 💾 saves maps across sessions. "Show my atlas" renders a force-directed network of all your maps with auto-detected concept links. |
+ 
 ## Token Usage Estimates
-
+ 
 Mind map generation is a single-turn operation. Here's what to expect:
-
+ 
 | Component | First map | Follow-ups |
 |-----------|-----------|------------|
 | **Input: SKILL.md** (always loaded) | ~5,700 | ~5,700 |
 | **Input: best-practices reference** | ~2,700 | — (skipped) |
 | **Input: export-patterns reference** | ~1,400 | — (skipped) |
 | **Input: layout-engine reference** | ~1,500 | — (skipped) |
+| **Input: atlas-storage reference** | ~1,800 | — (only when atlas requested) |
 | **Input: your content** (text/PDF) | 1,000–5,000 | 200–1,000 |
 | **Input: system prompt overhead** | ~1,000 | ~1,000 |
 | **Output: response + artifact** | ~5,500 | ~3,000 |
 | | | |
 | **Total** | **~19,000–23,000** | **~10,000–11,000** |
-
+ 
 **In practice:** The first map in a conversation loads all four reference files (~5,600 tokens combined), but follow-ups skip them entirely — saving ~55% on edits like "expand this branch" or "switch to tree layout". On Claude Pro, this is well within normal usage. On the API, expect ~$0.06–0.15 per first map and ~$0.03–0.06 per follow-up.
-
+ 
 **What affects cost:**
 - Longer input documents → more input tokens (but output stays ~5K regardless — the skill compresses aggressively)
 - Follow-ups are significantly cheaper than the first generation
 - Asking for structural changes ("add a branch", "merge these two") regenerates the full artifact (~5K output); cosmetic changes ("change palette") are lighter
-
+ 
 ## License
-
+ 
 MIT
