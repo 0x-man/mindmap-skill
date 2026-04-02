@@ -383,9 +383,10 @@ resolves. But exported SVGs must use `Arial, Helvetica, 'Segoe UI', Roboto, sans
 system-ui and -apple-system resolve to nothing on Android, Windows PDF viewers, and most
 non-browser contexts. This is handled in the `prepareSvgForExport` function.
 
-**Export button UI**: Three groups in the control bar separated by dividers.
-Visual exports: SVG, PNG, PDF. Interchange exports: MD, MMD. Embed: a `</>` button.
-Flash a ✓ for 1.5s on click. Filename = slugified central topic.
+**Export button UI**: Three groups separated by dividers — Visual: SVG, PNG, PDF;
+Interchange: MD, MMD; Embed: `</>`. Plus a 💾 save button (persists map to storage for
+the atlas). Flash ✓ for 1.5s on click. See `references/atlas-storage.md` for persistence,
+atlas viewer, and auto-linking. Filename = slugified central topic.
 
 **Expand before export**: Always export ALL nodes including collapsed ones. The export
 functions receive full `layout.nodes`, not the filtered visible subset.
@@ -455,6 +456,7 @@ Map natural language to one of these operations:
 | "Change the style" / "make it darker" | **Visual tweak** | Adjust central node color, palette, or layout constants |
 | "Add source for X" | **Attribution** | Add to `sources` array + set `sourceId` on the node |
 | "Make it a tree" / "use flow layout" | **Layout switch** | Set `layout` field + recompute positions per `references/layout-engine.md` |
+| "Save this map" / "show my atlas" | **Storage** | Save/load/list maps per `references/atlas-storage.md` |
 
 ### Edit Response Pattern
 
