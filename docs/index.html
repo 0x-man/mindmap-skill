@@ -77,6 +77,16 @@
 
   /* Why section */
   .stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:48px}
+
+  /* Atlas section */
+  .atlas-flow{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;counter-reset:flow-step;margin-bottom:40px}
+  .flow-step{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px 20px;counter-increment:flow-step;position:relative}
+  .flow-step::before{content:counter(flow-step);font-family:'DM Serif Display',serif;font-size:40px;color:rgba(255,255,255,0.04);position:absolute;top:14px;right:16px;line-height:1}
+  .flow-step h3{font-size:14px;font-weight:700;margin-bottom:6px}
+  .flow-step p{font-size:13px;color:var(--text-muted);line-height:1.5}
+  .flow-step .flow-icon{font-size:24px;margin-bottom:12px;display:block}
+  .atlas-preview{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:32px;overflow:hidden;position:relative}
+  .atlas-preview svg{width:100%;height:auto}
   .stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;text-align:center}
   .stat-number{font-family:'DM Serif Display',serif;font-size:clamp(36px,5vw,52px);line-height:1;margin-bottom:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
   .stat-label{font-size:13px;color:var(--text-muted);line-height:1.4}
@@ -114,11 +124,11 @@
 <section class="hero">
   <div class="container">
     <div class="hero-badge">🧠 Claude Skill <span>· Open Source</span></div>
-    <h1>Turn anything into<br>an <em>intelligent</em> mind map</h1>
-    <p class="hero-sub">A Claude skill that transforms documents, articles, brainstorms, and ideas into interactive mind maps with contradiction detection, gap analysis, source attribution, and 7 export formats — including embeddable HTML.</p>
+    <h1>Turn anything into<br>an <em>intelligent</em> mind map.<br>Then connect them all.</h1>
+    <p class="hero-sub">A Claude skill that transforms documents, articles, brainstorms, and ideas into interactive mind maps — then connects them into a personal knowledge atlas. Contradiction detection, gap analysis, source attribution, 7 export formats, and adaptive layouts.</p>
     <div class="hero-actions">
-      <a href="https://github.com/0x-man/mindmap-skill/releases/latest" class="btn btn-primary">↓ Download .skill file</a>
-      <a href="https://github.com/0x-man/mindmap-skill" class="btn btn-ghost">View on GitHub →</a>
+      <a href="https://github.com/YOUR_USERNAME/mindmap-skill/releases/latest" class="btn btn-primary">↓ Download .skill file</a>
+      <a href="https://github.com/YOUR_USERNAME/mindmap-skill" class="btn btn-ghost">View on GitHub →</a>
     </div>
   </div>
 </section>
@@ -156,6 +166,8 @@
       <div class="feature-card reveal"><span class="feature-icon">⊜</span><h3>Edge Anchoring</h3><p>Connectors start and end at pill edges, not node centers. No line ever overlaps text.</p></div>
       <div class="feature-card reveal"><span class="feature-icon">✏️</span><h3>Conversational Editing</h3><p>"Add X under Y", "move Z to W", "merge these two." Surgical edits without regenerating from scratch — 40–50% cheaper.</p></div>
       <div class="feature-card reveal"><span class="feature-icon">🔀</span><h3>Adaptive Layout</h3><p>Auto-selects radial, semi-circular, tree, or flow based on content shape. Processes get flow, taxonomies get tree. Say "make it a tree" to override.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">💾</span><h3>Persistent Maps</h3><p>Save maps across sessions. Come back tomorrow and pick up where you left off. Auto-saves on edits.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">🌐</span><h3>Knowledge Atlas</h3><p>"Show my atlas" renders all your saved maps as a force-directed network. Shared concepts between maps are detected automatically and shown as connections.</p></div>
     </div>
   </div>
 </section>
@@ -226,20 +238,103 @@
   </div>
 </section>
 
+<!-- KNOWLEDGE ATLAS -->
+<section class="section" style="background:linear-gradient(180deg,transparent,rgba(233,180,76,0.015),transparent)">
+  <div class="container">
+    <div class="section-label reveal">Beyond a Single Map</div>
+    <h2 class="reveal">Your Knowledge Atlas</h2>
+    <p class="section-desc reveal">Every map you save becomes a node in a personal knowledge graph. Shared concepts are detected automatically. Over time, a picture of how your knowledge connects emerges.</p>
+
+    <div class="atlas-flow">
+      <div class="flow-step reveal">
+        <span class="flow-icon">🗺️</span>
+        <h3>Generate maps</h3>
+        <p>Mind map articles, books, meetings, PDFs, or any topic. Each one is a structured knowledge snapshot.</p>
+      </div>
+      <div class="flow-step reveal">
+        <span class="flow-icon">💾</span>
+        <h3>Save to your atlas</h3>
+        <p>Click 💾 and the map persists across sessions. Come back tomorrow and it's still there.</p>
+      </div>
+      <div class="flow-step reveal">
+        <span class="flow-icon">🔗</span>
+        <h3>Connections emerge</h3>
+        <p>The system auto-detects shared concepts between maps. "Inflation" in your crypto map links to "rate decisions" in your Fed map.</p>
+      </div>
+      <div class="flow-step reveal">
+        <span class="flow-icon">🌐</span>
+        <h3>Explore your atlas</h3>
+        <p>Say "show my atlas" — a force-directed graph shows all your maps, their connections, and where your knowledge clusters.</p>
+      </div>
+    </div>
+
+    <!-- Static SVG atlas preview -->
+    <div class="atlas-preview reveal">
+      <svg viewBox="0 0 700 320">
+        <!-- Connection lines -->
+        <line x1="170" y1="130" x2="380" y2="100" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+        <line x1="380" y1="100" x2="540" y2="170" stroke="rgba(255,255,255,0.1)" stroke-width="3"/>
+        <line x1="170" y1="130" x2="350" y2="250" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+        <line x1="350" y1="250" x2="540" y2="170" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+
+        <!-- Shared concept labels -->
+        <text x="270" y="108" text-anchor="middle" font-size="9" fill="rgba(233,180,76,0.5)" font-family="DM Sans,sans-serif">inflation</text>
+        <text x="462" y="128" text-anchor="middle" font-size="9" fill="rgba(233,180,76,0.5)" font-family="DM Sans,sans-serif">social media</text>
+        <text x="252" y="200" text-anchor="middle" font-size="9" fill="rgba(233,180,76,0.5)" font-family="DM Sans,sans-serif">governance</text>
+
+        <!-- Map 1: Crypto -->
+        <circle cx="170" cy="130" r="40" fill="#D64045" opacity="0.15"/>
+        <circle cx="170" cy="130" r="40" fill="none" stroke="#D64045" stroke-width="1.5" opacity="0.4"/>
+        <circle cx="170" cy="130" r="22" fill="#0c0f14"/>
+        <text x="170" y="126" text-anchor="middle" font-size="9" font-weight="700" fill="#e8e6e1" font-family="DM Sans,sans-serif">Macro Case</text>
+        <text x="170" y="138" text-anchor="middle" font-size="8" fill="#8a8780" font-family="DM Sans,sans-serif">6 branches</text>
+        <circle cx="202" cy="98" r="7" fill="#e9b44c"/><text x="202" y="101" text-anchor="middle" font-size="7" font-weight="700" fill="#0c0f14" font-family="DM Sans,sans-serif">2</text>
+
+        <!-- Map 2: Deep Work -->
+        <circle cx="380" cy="100" r="36" fill="#2A9D8F" opacity="0.15"/>
+        <circle cx="380" cy="100" r="36" fill="none" stroke="#2A9D8F" stroke-width="1.5" opacity="0.4"/>
+        <circle cx="380" cy="100" r="20" fill="#0c0f14"/>
+        <text x="380" y="96" text-anchor="middle" font-size="9" font-weight="700" fill="#e8e6e1" font-family="DM Sans,sans-serif">Deep Work</text>
+        <text x="380" y="108" text-anchor="middle" font-size="8" fill="#8a8780" font-family="DM Sans,sans-serif">6 branches</text>
+        <circle cx="408" cy="72" r="7" fill="#e9b44c"/><text x="408" y="75" text-anchor="middle" font-size="7" font-weight="700" fill="#0c0f14" font-family="DM Sans,sans-serif">2</text>
+
+        <!-- Map 3: AI Safety -->
+        <circle cx="540" cy="170" r="38" fill="#1D3557" opacity="0.15"/>
+        <circle cx="540" cy="170" r="38" fill="none" stroke="#1D3557" stroke-width="1.5" opacity="0.4"/>
+        <circle cx="540" cy="170" r="21" fill="#0c0f14"/>
+        <text x="540" y="166" text-anchor="middle" font-size="9" font-weight="700" fill="#e8e6e1" font-family="DM Sans,sans-serif">AI Safety</text>
+        <text x="540" y="178" text-anchor="middle" font-size="8" fill="#8a8780" font-family="DM Sans,sans-serif">5 branches</text>
+        <circle cx="570" cy="140" r="7" fill="#e9b44c"/><text x="570" y="143" text-anchor="middle" font-size="7" font-weight="700" fill="#0c0f14" font-family="DM Sans,sans-serif">2</text>
+
+        <!-- Map 4: Cybersecurity -->
+        <circle cx="350" cy="250" r="34" fill="#5B8C5A" opacity="0.15"/>
+        <circle cx="350" cy="250" r="34" fill="none" stroke="#5B8C5A" stroke-width="1.5" opacity="0.4"/>
+        <circle cx="350" cy="250" r="19" fill="#0c0f14"/>
+        <text x="350" y="246" text-anchor="middle" font-size="9" font-weight="700" fill="#e8e6e1" font-family="DM Sans,sans-serif">Cybersecurity</text>
+        <text x="350" y="258" text-anchor="middle" font-size="8" fill="#8a8780" font-family="DM Sans,sans-serif">5 branches</text>
+        <circle cx="376" cy="224" r="7" fill="#e9b44c"/><text x="376" y="227" text-anchor="middle" font-size="7" font-weight="700" fill="#0c0f14" font-family="DM Sans,sans-serif">2</text>
+      </svg>
+      <div style="text-align:center;font-size:11px;color:rgba(255,255,255,0.25);margin-top:12px">
+        Illustrative atlas view — gold badges show connection count, lines show shared concepts between maps
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- INSTALL -->
 <section class="section" style="background:linear-gradient(180deg,transparent,rgba(42,157,143,0.02),transparent)">
   <div class="container">
     <div class="section-label reveal">Install</div>
     <h2 class="reveal">30 seconds to your first map</h2>
     <div class="install-steps">
-      <div class="step-card reveal"><h3>Download</h3><p>Grab <code>mindmap.skill</code> from the <a href="https://github.com/0x-man/mindmap-skill/releases/latest" style="color:var(--accent)">latest release</a>.</p></div>
+      <div class="step-card reveal"><h3>Download</h3><p>Grab <code>mindmap.skill</code> from the <a href="https://github.com/YOUR_USERNAME/mindmap-skill/releases/latest" style="color:var(--accent)">latest release</a>.</p></div>
       <div class="step-card reveal"><h3>Install</h3><p>Drag it into any Claude chat, or go to <strong>Settings → Profile → Custom Skills</strong>.</p></div>
       <div class="step-card reveal"><h3>Use</h3><p>Say <em>"mind map this"</em> with any content — pasted text, a PDF, or just a topic.</p></div>
     </div>
   </div>
 </section>
 
-<footer><div class="container"><p>Built with Claude · <a href="https://github.com/0x-man/mindmap-skill">GitHub</a> · MIT License</p></div></footer>
+<footer><div class="container"><p>Built with Claude · <a href="https://github.com/YOUR_USERNAME/mindmap-skill">GitHub</a> · MIT License</p></div></footer>
 
 <!-- ════════════ INTERACTIVE MIND MAP ENGINE (vanilla JS) ════════════ -->
 <script>
