@@ -181,8 +181,23 @@ function edgePoint(cx, cy, hw, hh, targetX, targetY) {
 ```
 
 Use `edgePoint` for both the start (parent → child direction) and end (child → parent
-direction) of each curve. The Bézier control point stays at the midpoint with the usual
-perpendicular offset.
+direction) of each curve. The complete curve function:
+
+```javascript
+function curve(fromId, toId, nodesMap, pillFn) {
+  const a = nodesMap.get(fromId), b = nodesMap.get(toId);
+  if (!a || !b) return "";
+  const pa = pillFn(a.label, a.depth), pb = pillFn(b.label, b.depth);
+  const s = edgePoint(a.x, a.y, pa.w/2, pa.h/2, b.x, b.y);
+  const e = edgePoint(b.x, b.y, pb.w/2, pb.h/2, a.x, a.y);
+  const qx = (s.x+e.x)/2 + (s.y-e.y)*0.15;
+  const qy = (s.y+e.y)/2 + (e.x-s.x)*0.15;
+  return `M ${s.x} ${s.y} Q ${qx} ${qy} ${e.x} ${e.y}`;
+}
+```
+
+NEVER use `M ${a.x} ${a.y} ... ${b.x} ${b.y}` — that draws center-to-center
+and causes lines to overlap with text labels inside the pills.
 
 ### Node Styling
 
@@ -193,30 +208,11 @@ perpendicular offset.
 - Add a relevant emoji prefix to each main branch for quick visual scanning
 
 **Text containment (critical):** Text must never extend beyond its pill. Compute pill
-width from the actual text measurement, not a character-count estimate:
-
-```javascript
-// Measure text width accurately using a temporary SVG element
-function measureText(label, fontSize, fontWeight) {
-  const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  t.setAttribute('font-size', fontSize);
-  t.setAttribute('font-weight', fontWeight);
-  t.style.fontFamily = 'system-ui, -apple-system, sans-serif';
-  t.textContent = label;
-  svg.appendChild(t);  // append to the live SVG so the browser computes the bbox
-  const w = t.getBBox().width;
-  svg.removeChild(t);
-  return w;
-}
-```
-
-Then set pill width = `measuredTextWidth + padding`, where padding is at least 28px
-per side for depth-0, 20px for depth-1, and 16px for depth-2. This guarantees the
-text fits regardless of font rendering differences across platforms.
-
-If `measureText` is not feasible (e.g., layout runs before SVG mount), use a conservative
-character-width estimate of `fontSize * 0.62` per character (not 0.55, which clips on
-wider glyphs like "W", "M", emojis). Always add the per-side padding on top.
+width from actual text, not estimates. Use a temporary SVG `<text>` element with
+`getBBox().width` to measure accurately, then add padding (28px/side for depth-0,
+20px for depth-1, 16px for depth-2). If measuring before SVG mount, use a conservative
+character-width estimate of `fontSize * 0.62` per character (not 0.55 — too tight for
+wide glyphs and emojis), plus the same per-side padding.
 
 **Weighted nodes** (`weight` field present): Scale the pill width by `1 + (weight - 1) * 0.06`
 and bump font-weight up one step (400→500, 500→600). This creates a subtle visual hierarchy
