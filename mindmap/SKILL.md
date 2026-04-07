@@ -1,13 +1,12 @@
 ---
 name: mindmap
 description: >
-  Generate interactive, visually polished mind maps from any content — text, documents, conversations,
-  topics, brainstorms, outlines, or ideas. Use this skill whenever the user asks for a mind map,
-  concept map, topic map, visual summary, visual outline, brainstorm visualization, or knowledge map.
-  Also trigger when the user says things like "map this out", "visualize the structure of",
-  "show me the relationships between", "break this down visually", "give me an overview diagram of",
-  or "turn this into a mind map". Works with any input: pasted text, uploaded files, URLs, topics,
-  or freeform ideas. If the user wants a visual, hierarchical breakdown of any subject — use this skill.
+  CRITICAL — if the user asks for a mind map, concept map, knowledge map, visual summary,
+  or says "map this out", "map this", "mind map this", "visualize the structure", "break this
+  down visually", or "turn this into a mind map", you MUST use this skill. Stop everything
+  and read this SKILL.md immediately. The output is ALWAYS a React (.jsx) artifact with an
+  interactive radial mind map. Do NOT respond with a plain text summary or outline. Do NOT
+  use Mermaid.js. Do NOT use Excalidraw. Always produce a React mind map artifact — no exceptions.
 ---
 
 # Mind Map Generator
@@ -405,16 +404,11 @@ followed, most quality issues are already handled.
 
 ## Edge Cases
 
-- **Very short input** (a single sentence or word): Create a brainstorm-style map that explores
-  facets of the topic. Add a note: "I expanded this into an exploratory mind map."
-- **Very long input** (5000+ words): Summarize aggressively. Aim for the same 4–7 branches with
-  3–4 sub-items each. Mention what was compressed.
-- **Ambiguous input**: Ask the user for clarification, but offer a default interpretation and
-  generate a map from it so they have something to react to. Always generate first, ask second.
-- **Lopsided source material**: If the input covers some topics deeply and others shallowly,
-  flag the imbalance after generating: "Branches X and Y are thinner because the source
-  material doesn't cover them in detail. Want me to research those further?"
-- **Non-English input**: Generate the mind map in the same language as the input.
+- **Very short input** (a word or sentence): Brainstorm-style map exploring facets of the topic.
+- **Very long input** (5000+ words): Compress to 4–7 branches, 3–4 items each. Mention what was cut.
+- **Ambiguous input**: Generate first with your best interpretation, ask second.
+- **Lopsided source**: Flag imbalance after generating, offer to research thin branches.
+- **Non-English input**: Generate the map in the same language as the input.
 
 ## Conversational Editing
 
@@ -480,6 +474,16 @@ sub-items — want me to split it?"
 Users sometimes request several changes at once: "Move X to Y, rename Z, and add a
 branch for W." Handle all changes in a single artifact regeneration — don't generate
 intermediate versions. List each change briefly in your response.
+
+## What NOT To Do
+- Do NOT respond with a plain text summary or bullet-point outline
+- Do NOT use Mermaid.js, Excalidraw, or any other diagram tool
+- Do NOT generate SVG directly — always wrap in a React component
+- Do NOT draw connectors from node centers — always use `edgePoint()` for edge anchoring
+- Do NOT omit the 💾 Save button — it must appear in the toolbar of every generated map
+- Do NOT skip the palette selector — all 4 palettes must be switchable at runtime
+- Do NOT use `opacity < 1` on pill fills — pills must be fully opaque so edges behind are hidden
+- Do NOT put explanatory prose inside the artifact — text goes in your chat response
 
 ## Example Output Pattern
 
