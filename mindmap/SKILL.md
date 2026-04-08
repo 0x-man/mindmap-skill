@@ -11,219 +11,296 @@ description: >
 
 # Mind Map Generator
 
-Generate interactive mind maps as React (.jsx) artifacts using a template-based approach.
+Generate interactive mind maps as React (.jsx) artifacts.
 
-## How This Skill Works
+## When You Receive a Request
 
-This skill uses a **complete working template** at `references/template.md`. You do NOT
-generate the React component from scratch. Instead:
-
-1. Read `references/template.md` — it contains a full working React component
-2. Read `references/mindmap-best-practices.md` — for content analysis guidance
-3. Analyze the user's input to extract the mind map structure
-4. Copy the template EXACTLY, replacing ONLY the `mindmapData` constant at the top
-5. Output the result as a .jsx artifact
-
-**On follow-up requests** (edits, palette changes, exports): Skip reading reference files.
-Modify only the `mindmapData` block in the existing artifact. Do NOT touch the engine code.
+1. Analyze the input content — extract the central topic and 4–7 main branches
+2. Build the `mindmapData` object following the Data Structure section below
+3. Generate a React artifact that includes ALL of the Mandatory Code below
+4. Optionally read `references/mindmap-best-practices.md` for keyword compression examples
 
 ## Content Analysis Strategy
 
-Before building the map, think carefully about structure:
+- **Central topic**: One noun phrase, 2–5 words max.
+- **Main branches**: 4–7 categories. 5–6 is the sweet spot.
+- **Sub-branches**: 2–5 items per branch. Keywords only, not full sentences.
+- **Depth limit**: 3 levels max (central → branch → sub-branch).
 
-- **Central topic**: One clear noun phrase (2–5 words max).
-- **Main branches**: 4–7 primary categories. 5–6 is the sweet spot.
-- **Sub-branches**: 2–5 items per main branch. Use keywords, not full sentences.
-  See the Keyword Compression section in `references/mindmap-best-practices.md` for
-  20 before/after examples of how to compress well.
-- **Depth limit**: No deeper than 3 levels (central → branch → sub-branch).
+For long content: identify the main argument → group into thematic clusters → extract
+key evidence → discard redundancy. For broad topics: educational overview, foundational
+concepts first.
 
-When analyzing long or complex content (articles, documents, book chapters):
-- First identify the author's main argument → this becomes the central topic
-- Group supporting points into thematic clusters → these become main branches
-- Extract key evidence, examples, or details → these become sub-branches
-- Discard redundancy ruthlessly — mind maps are about compression, not completeness
-
-When the input is a broad topic (e.g., "machine learning") rather than a specific document:
-- Use your knowledge to create a well-structured educational overview
-- Prioritize the most important/foundational concepts
-
-### Branch Balance Analysis
-
-After extracting your initial structure, check for imbalance:
-
-- **Thin branches** (only 1 sub-item): Merge into a sibling or flesh out.
-- **Fat branches** (6+ sub-items): Split into two. Look for a natural fault line.
-- If you can't fix imbalance from the source material, tell the user explicitly.
+**Branch balance**: Thin branches (1 item) → merge or expand. Fat branches (6+) → split.
 
 ### Content Intelligence
 
-These turn a mind map from a passive summary into an analytical tool.
+**Contradiction detection**: Sources disagree → mark both with ⚡ prefix, add `conflict` field.
+**Gap analysis**: Thin evidence → add ❓ prefix, set `type: "inquiry"`.
+**Frequency weighting**: Multi-source → `weight` field (1–5).
+**Cross-branch links**: Meaningful relationships → `crossLinks` array. Max 3–4.
 
-**Contradiction detection.** When two sources disagree, mark both nodes with ⚡ prefix
-and add a `conflict` field linking the two node IDs. The template renders a red dashed
-line between conflicting nodes.
-
-**Gap analysis (Inquiry Nodes).** Where source material is thin on a structurally
-important topic, add a node with ❓ prefix and `type: "inquiry"`. The template renders
-these with a dashed border.
-
-**Frequency-based weighting.** For multi-source input, track how many sources mention
-each concept as a `weight` field (1–5). The template renders heavier nodes slightly larger.
-
-**Cross-branch links.** When ideas in different branches have a meaningful relationship,
-add them to the top-level `crossLinks` array. Max 3–4.
-
-## Data Structure Reference
-
-The `mindmapData` constant you replace in the template must follow this schema:
+## Data Structure
 
 ```javascript
 const mindmapData = {
   central: "Topic Name",
-  // layout: "radial",  // optional: "radial"|"semicircle"|"tree"|"flow"
-  // sources: [{ id: "s1", label: "Author 2024", url: "https://..." }],
-  // crossLinks: [{ from: "s-0-2", to: "s-3-1", label: "enables" }],
   branches: [
     {
-      label: "🎯 Branch Name",    // emoji prefix + 2-5 words
-      group: 0,                    // semantic grouping (adjacent branches)
-      // sourceId: "s1",           // optional source attribution
+      label: "🎯 Branch Name",  // emoji + 2-5 words
+      group: 0,                  // semantic grouping
       children: [
-        {
-          label: "Sub-item 1",     // 2-5 words, compressed
-          // detail: "Expanded context shown on hover",
-          // weight: 3,            // 1-5, frequency across sources
-          // sourceId: "s2",
-        },
-        { label: "❓ Under-explored area", type: "inquiry" },
-        { label: "⚡ Claim A conflicts", conflict: "s-2-1" },
+        { label: "Sub-item", detail: "Hover tooltip text" },
+        { label: "❓ Gap node", type: "inquiry" },
       ],
     },
   ],
 };
 ```
 
-### Field reference
+Fields: `label` (2-5 words), `group` (int, adjacent placement), `detail` (hover text),
+`weight` (1-5), `type: "inquiry"`, `conflict` (node ID), `sourceId`, `sources[]`, `crossLinks[]`.
 
-- `central`: 2–5 word topic name
-- `branches[]`: 4–7 main branches, each with `label`, optional `group`, `sourceId`, `children`
-- `children[]`: 2–5 sub-items per branch, each with `label`, optional `detail`, `weight`, `type`, `conflict`, `sourceId`
-- `group` (integer): Semantic grouping. Same-group branches sit adjacent on the circle.
-- `detail` (string): 1–2 sentence expansion shown on hover. Truncate inline at word boundaries.
-- `weight` (1–5): Frequency across sources. Omit for single-source maps.
-- `type: "inquiry"`: Renders with dashed border and ❓ prefix.
-- `conflict` (node ID): Points to contradicting node. Both get ⚡ prefix.
-- `sourceId` (string): Links to a source in the `sources` array.
-- `sources[]`: Reference list. Only include for content from identifiable sources.
-- `crossLinks[]`: Inter-branch relationships. Max 3–4.
-- `layout`: Override auto-detection. See `references/layout-engine.md` for algorithms.
+## ═══ MANDATORY CODE — Include ALL of This in Every Artifact ═══
 
-### Source Attribution
+The sections below contain exact code that MUST appear in every generated mind map.
+Copy these functions and UI elements verbatim. Do not paraphrase, simplify, or omit them.
 
-When input comes from identifiable sources (articles, papers, URLs), populate `sources`
-and tag nodes with `sourceId`. Nodes with a source show 🔗 on hover. The map footer
-shows a numbered source list. For knowledge-based maps, omit sources entirely.
+### Pill Sizing
 
-## Template Usage
+```jsx
+function getPill(label, depth) {
+  var fs = depth === 0 ? 17 : depth === 1 ? 14 : 12;
+  var pad = depth === 0 ? 34 : depth === 1 ? 22 : 18;
+  return {
+    w: Math.max(label.length * fs * 0.62 + pad * 2, 90),
+    h: depth === 0 ? 50 : depth === 1 ? 38 : 32,
+  };
+}
+```
 
-### Generating the artifact
+### Edge-Anchored Connectors
 
-1. Read `references/template.md`
-2. Copy the entire JSX code block from the template
-3. Replace ONLY the `mindmapData` constant (everything between `/* ━━━ REPLACE THIS DATA BLOCK ━━━ */` and `/* ━━━ ENGINE ━━━ */`) with your extracted content
-4. Output as a .jsx artifact
+Lines MUST start and end at the pill EDGE, not the center. Use these two functions:
 
-The template includes: edge-anchored connectors (via `edgePoint`), 💾 save button,
-palette switcher (4 palettes), fullscreen toggle, pan/zoom, collapse/expand, and hover
-tooltips. All of these work automatically — you do not need to implement them.
+```jsx
+function edgePoint(cx, cy, hw, hh, tx, ty) {
+  var dx = tx - cx, dy = ty - cy;
+  var dist = Math.sqrt(dx * dx + dy * dy);
+  if (dist < 0.01) return { x: cx + hw, y: cy };
+  var nx = dx / dist, ny = dy / dist;
+  var t = 1.0 / Math.sqrt((nx * nx) / (hw * hw) + (ny * ny) / (hh * hh));
+  return { x: cx + nx * t, y: cy + ny * t };
+}
 
-### What the template provides (do NOT reimplement)
+function buildCurve(ax, ay, aLabel, aDepth, bx, by, bLabel, bDepth) {
+  var pa = getPill(aLabel, aDepth), pb = getPill(bLabel, bDepth);
+  var s = edgePoint(ax, ay, pa.w / 2, pa.h / 2, bx, by);
+  var e = edgePoint(bx, by, pb.w / 2, pb.h / 2, ax, ay);
+  var qx = (s.x + e.x) / 2 + (s.y - e.y) * 0.18;
+  var qy = (s.y + e.y) / 2 + (e.x - s.x) * 0.18;
+  return "M " + s.x + " " + s.y + " Q " + qx + " " + qy + " " + e.x + " " + e.y;
+}
+```
 
-| Feature | In template? |
-|---------|-------------|
-| Edge-anchored connectors | ✅ via `edgePoint()` + `buildCurve()` |
-| 💾 Save button (storage API) | ✅ in toolbar |
-| 4 color palettes + runtime switching | ✅ 🎨 button |
-| Fullscreen toggle | ✅ ⛶ button |
-| Pan/zoom/collapse | ✅ mouse + buttons |
-| Hover tooltips (fixed position) | ✅ top-left card |
-| Fully opaque pills | ✅ no opacity on fills |
-| Semantic gravity (group-based) | ✅ in `buildLayout()` |
+When rendering edges, call `buildCurve` with the actual node positions and labels:
 
-### Adding export buttons
+```jsx
+{edges.map(function(edge, i) {
+  var fromN = nodesMap.get(edge.from);
+  var toN = nodesMap.get(edge.to);
+  if (!fromN || !toN) return null;
+  var d = buildCurve(fromN.x, fromN.y, fromN.label, fromN.depth,
+                     toN.x, toN.y, toN.label, toN.depth);
+  return <path key={"e-" + i} d={d} fill="none" stroke={color}
+    strokeWidth={edge.depth === 1 ? 2.5 : 1.6}
+    strokeOpacity={edge.depth === 1 ? 0.45 : 0.25} strokeLinecap="round" />;
+})}
+```
 
-If the user asks for export functionality, read `references/export-patterns.md` and add
-the export functions to the template. This is the ONLY case where you modify the engine
-code — and only by adding new functions and buttons, never by changing existing ones.
+NEVER write `M ${a.x} ${a.y} Q ... ${b.x} ${b.y}` — that draws center-to-center.
+
+### Node Rendering — Fully Opaque Pills
+
+Pill `<rect>` elements must have NO opacity attribute. This prevents edges from
+bleeding through the pill background. Copy this pattern:
+
+```jsx
+{nodes.map(function(node) {
+  var pill = getPill(node.label, node.depth);
+  var w = pill.w, h = pill.h;
+  // bg = "#0d1b2a" for depth 0, palette color for depth 1, lighten(color) for depth 2
+  return (
+    <g key={node.id} transform={"translate(" + node.x + "," + node.y + ")"}>
+      {/* Pill — NO opacity attribute */}
+      <rect x={-w/2} y={-h/2} width={w} height={h}
+        rx={node.depth === 0 ? 13 : 19} fill={bgColor} />
+      <text textAnchor="middle" dy="0.35em" fontSize={fontSize}
+        fontWeight={fontWeight} fill={textColor}
+        style={{ fontFamily: "system-ui, sans-serif", pointerEvents: "none" }}>
+        {node.label}
+      </text>
+    </g>
+  );
+})}
+```
+
+### 💾 Save Button
+
+Every mind map MUST include a Save button in the toolbar. Copy this handler:
+
+```jsx
+var [saveMsg, setSaveMsg] = useState(null);
+
+async function handleSave() {
+  var slug = mindmapData.central.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  var key = "maps:" + slug;
+  var existing = null;
+  try { existing = await window.storage.get(key); } catch(e) {}
+  var now = new Date().toISOString();
+  var record = {
+    data: mindmapData,
+    palette: palName,
+    layout: "radial",
+    createdAt: existing ? JSON.parse(existing.value).createdAt : now,
+    updatedAt: now,
+    tags: [],
+  };
+  try {
+    await window.storage.set(key, JSON.stringify(record));
+    setSaveMsg(existing ? "Updated ✓" : "Saved ✓");
+  } catch(e) { setSaveMsg("Error"); }
+  setTimeout(function() { setSaveMsg(null); }, 2000);
+}
+```
+
+And this button in the toolbar (after the palette picker):
+
+```jsx
+<button onClick={handleSave} style={{
+  height: 32, padding: "0 16px", border: "1px solid #ddd", borderRadius: 7,
+  background: saveMsg ? "#e8f5ee" : "#fff", cursor: "pointer",
+  fontSize: 13, fontWeight: 700, fontFamily: "system-ui, sans-serif",
+  color: saveMsg ? "#2D6A4F" : "#555",
+}}>
+  {saveMsg || "💾 Save"}
+</button>
+```
+
+### Palette System
+
+Include all four palettes and a runtime switcher:
+
+```jsx
+var PALETTES = {
+  Bauhaus: ["#D64045","#1D3557","#E9B44C","#2D6A4F","#7B2D8E","#E07A5F","#457B9D"],
+  "Ocean Sunset": ["#E76F51","#2A9D8F","#E9C46A","#264653","#F4A261","#287271","#BC4749"],
+  "Nordic Forest": ["#5B8C5A","#4A6FA5","#C17C74","#7B6D8D","#D4A574","#4D8B8B","#8B6F47"],
+  "Pastel Garden": ["#7EB8DA","#B5C99A","#E8A87C","#9B8EC1","#F2CC8F","#81B29A","#E07A5F"],
+};
+```
+
+Add a 🎨 button that shows a dropdown to switch palettes at runtime.
+
+### Layout Algorithm
+
+Radial layout with semantic gravity. Branches sorted by `group`, distributed around
+a circle with gaps between groups:
+
+```jsx
+function buildLayout(data) {
+  var nodes = [], edges = [], cx = 600, cy = 450;
+  nodes.push({ id: "root", label: data.central, x: cx, y: cy, depth: 0,
+    childIds: [], collapsed: false, bi: -1, detail: null });
+  var branches = data.branches || [];
+  var sorted = branches.map(function(b, i) { return Object.assign({}, b, { oi: i }); });
+  sorted.sort(function(a, b) { return (a.group || 0) - (b.group || 0); });
+  var groups = [], lastG = null;
+  sorted.forEach(function(b, i) { if (b.group !== lastG) { groups.push(i); lastG = b.group; } });
+  var gapExtra = 0.14, totalGap = Math.max(0, groups.length - 1) * gapExtra;
+  var baseStep = (2 * Math.PI - totalGap) / sorted.length;
+  var angle = -Math.PI / 2;
+  sorted.forEach(function(branch, i) {
+    if (i > 0 && groups.indexOf(i) !== -1) angle += gapExtra;
+    var bAngle = angle + (i * 0.05 - 0.08);
+    var bx = cx + Math.cos(bAngle) * 260, by = cy + Math.sin(bAngle) * 260;
+    var bId = "b-" + branch.oi;
+    nodes.push({ id: bId, label: branch.label, x: bx, y: by, depth: 1,
+      childIds: [], collapsed: false, bi: branch.oi, detail: branch.detail || null });
+    nodes[0].childIds.push(bId);
+    edges.push({ from: "root", to: bId, bi: branch.oi, depth: 1 });
+    var kids = branch.children || [];
+    kids.forEach(function(child, j) {
+      var cc = kids.length, spread = Math.PI * (cc > 4 ? 0.65 : 0.5);
+      var sa = bAngle - spread / 2;
+      var ca = cc === 1 ? bAngle : sa + (j / (cc - 1)) * spread;
+      var sx = bx + Math.cos(ca) * 150, sy = by + Math.sin(ca) * 150;
+      var cId = "s-" + branch.oi + "-" + j;
+      nodes.push({ id: cId, label: child.label, x: sx, y: sy, depth: 2,
+        childIds: [], collapsed: false, bi: branch.oi, detail: child.detail || null });
+      nodes.find(function(n) { return n.id === bId; }).childIds.push(cId);
+      edges.push({ from: bId, to: cId, bi: branch.oi, depth: 2 });
+    });
+    angle += baseStep;
+  });
+  return { nodes: nodes, edges: edges };
+}
+```
+
+### Required Interaction Features
+
+- **Pan**: mousedown drag on canvas background
+- **Zoom**: mouse wheel, plus +/− buttons in toolbar
+- **Collapse/expand**: click branch nodes to toggle children
+- **Hover tooltip**: fixed position (top-left), shows `detail` text if present
+- **Fullscreen**: ⛶ button, fills viewport, Escape to exit
+
+## ═══ END MANDATORY CODE ═══
 
 ## Conversational Editing
 
-After the first mind map is generated, users often want to refine it. The goal: make
-edits feel instant and cheap, not like starting over.
+After first generation, users refine through conversation. Only change `mindmapData`.
+Do NOT re-read references. Do NOT regenerate engine code.
 
-### Core Principle
+| User says | Operation |
+|---|---|
+| "Add X under Y" | Add child node |
+| "Remove X" | Delete node |
+| "Move X to Y" | Remove from old parent, add to new |
+| "Rename X to Y" | Update label |
+| "Merge X and Y" | Combine children |
+| "Expand X" | Add 2–4 sub-items |
+| "Simplify" | Prune depth-3, merge thin branches |
+| "Change palette" | Change default palette |
+| "Save this map" | Already handled by 💾 button |
+| "Show my atlas" | Generate atlas per `references/atlas-storage.md` |
 
-The `mindmapData` object is the single source of truth. On edit requests, change ONLY
-the data object and regenerate the artifact. The entire engine code stays identical.
-Do NOT re-analyze source content. Do NOT re-read reference files.
-
-### Recognizing Edit Intent
-
-| User says | Operation | What changes |
-|---|---|---|
-| "Add X under Y" | **Add node** | New child in target branch |
-| "Remove X" | **Remove node** | Delete from children |
-| "Move X to Y" | **Move node** | Remove from old, add to new parent |
-| "Rename X to Y" | **Relabel** | Update label field |
-| "Merge X and Y" | **Merge** | Combine children, pick better label |
-| "Split X" | **Split** | Two branches, redistribute children |
-| "Expand X" | **Deepen** | Add 2–4 sub-items |
-| "Simplify" | **Prune** | Remove depth-3 nodes, merge thin branches |
-| "Change palette" | **Palette** | Change default palette name |
-| "Make it a tree" | **Layout** | Set layout field per `references/layout-engine.md` |
-| "Save this map" | **Storage** | Already in template — 💾 button handles this |
-| "Show my atlas" | **Atlas** | Generate atlas viewer per `references/atlas-storage.md` |
-
-### Edit Response Pattern
-
-1. State the change in one sentence
-2. Regenerate the artifact with updated `mindmapData`
-3. Stop. Don't re-describe the map.
-
-### Ambiguous and Multi-Edits
-
-If unclear, make your best interpretation and execute. Show the result, let them redirect.
-If an edit breaks a rule (e.g., 8 sub-items), do it but flag: "This branch now has 8
-items — want me to split it?"
-
-Multiple changes in one request → one artifact regeneration, not multiple. List changes.
+Edit response: State change (1 sentence) → regenerate → stop.
 
 ## Edge Cases
 
-- **Very short input**: Brainstorm-style map exploring facets of the topic.
-- **Very long input** (5000+ words): Compress to 4–7 branches. Mention what was cut.
-- **Ambiguous input**: Generate first with best interpretation, ask second.
-- **Lopsided source**: Flag imbalance after generating, offer to research thin branches.
-- **Non-English input**: Generate the map in the same language.
+- **Very short input**: Brainstorm-style map exploring facets.
+- **Very long input**: Compress to 4–7 branches. Mention what was cut.
+- **Ambiguous**: Generate first, ask second.
+- **Non-English**: Same language as input.
 
 ## What NOT To Do
 
-- Do NOT generate the React component from scratch — ALWAYS copy the template
-- Do NOT modify anything below `/* ━━━ ENGINE ━━━ */` except when adding export functions
-- Do NOT respond with a plain text summary or outline
-- Do NOT use Mermaid.js, Excalidraw, or any other diagram tool
-- Do NOT use opacity < 1 on pill backgrounds
-- Do NOT put explanatory prose inside the artifact
+- Do NOT generate connectors using center coordinates — use `edgePoint()` + `buildCurve()`
+- Do NOT omit the 💾 Save button — include `handleSave` and the button element
+- Do NOT add opacity to pill `<rect>` elements — they must be fully opaque
+- Do NOT respond with a plain text summary — always produce a React artifact
+- Do NOT use Mermaid.js or Excalidraw
+- Do NOT skip the palette switcher
 
-## Example Output Pattern
+## Output Pattern
 
 **First generation:**
-1. Briefly explain what structure you extracted (1–2 sentences)
-2. Generate the React artifact (template with your data)
-3. Offer: "Want me to expand any branch, change the structure, or adjust the visual style?"
+1. Brief explanation of extracted structure (1–2 sentences)
+2. React artifact with mindmapData + all mandatory code above
+3. Offer to adjust
 
-**Subsequent edits:**
-1. State what you changed (1 sentence)
-2. Regenerate with updated data
+**Edits:**
+1. State the change (1 sentence)
+2. Regenerate with updated data only
 3. Stop.
