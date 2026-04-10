@@ -122,19 +122,22 @@ NEVER write `M ${a.x} ${a.y} Q ... ${b.x} ${b.y}` — that draws center-to-cente
 
 ### Node Rendering — Fully Opaque Pills
 
-Pill `<rect>` elements must have NO opacity attribute. This prevents edges from
-bleeding through the pill background. Copy this pattern:
+Pill `<rect>` elements MUST be 100% opaque so edges do not bleed through.
+CRITICAL: Do NOT use `opacity`, `fillOpacity`, `rgba()`, or 8-digit hex codes to lighten
+colors. If you need a lighter color, calculate a solid hex mixed with white. Force `fillOpacity={1}`.
+
+Copy this pattern exactly:
 
 ```jsx
 {nodes.map(function(node) {
   var pill = getPill(node.label, node.depth);
   var w = pill.w, h = pill.h;
-  // bg = "#0d1b2a" for depth 0, palette color for depth 1, lighten(color) for depth 2
+  // Use SOLID colors only. No rgba, no opacity.
   return (
     <g key={node.id} transform={"translate(" + node.x + "," + node.y + ")"}>
-      {/* Pill — NO opacity attribute */}
+      {/* Pill — Forced 100% opacity */}
       <rect x={-w/2} y={-h/2} width={w} height={h}
-        rx={node.depth === 0 ? 13 : 19} fill={bgColor} />
+        rx={node.depth === 0 ? 13 : 19} fill={bgColor} fillOpacity={1} />
       <text textAnchor="middle" dy="0.35em" fontSize={fontSize}
         fontWeight={fontWeight} fill={textColor}
         style={{ fontFamily: "system-ui, sans-serif", pointerEvents: "none" }}>
@@ -145,46 +148,56 @@ bleeding through the pill background. Copy this pattern:
 })}
 ```
 
-### 💾 Save Button
+### 💾 Save Button & Component Structure
 
-Every mind map MUST include a Save button in the toolbar. Copy this handler:
+Every mind map MUST include a Save button. To ensure this is not skipped, you MUST use
+this exact structural skeleton for your main component:
 
 ```jsx
-var [saveMsg, setSaveMsg] = useState(null);
+export default function MindMap() {
+  var [saveMsg, setSaveMsg] = useState(null);
+  var [palName, setPalName] = useState("Bauhaus");
 
-async function handleSave() {
-  var slug = mindmapData.central.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-  var key = "maps:" + slug;
-  var existing = null;
-  try { existing = await window.storage.get(key); } catch(e) {}
-  var now = new Date().toISOString();
-  var record = {
-    data: mindmapData,
-    palette: palName,
-    layout: "radial",
-    createdAt: existing ? JSON.parse(existing.value).createdAt : now,
-    updatedAt: now,
-    tags: [],
-  };
-  try {
-    await window.storage.set(key, JSON.stringify(record));
-    setSaveMsg(existing ? "Updated ✓" : "Saved ✓");
-  } catch(e) { setSaveMsg("Error"); }
-  setTimeout(function() { setSaveMsg(null); }, 2000);
+  // 1. Paste handleSave function here exactly as written:
+  async function handleSave() {
+    var slug = mindmapData.central.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    var key = "maps:" + slug;
+    var existing = null;
+    try { existing = await window.storage.get(key); } catch(e) {}
+    var now = new Date().toISOString();
+    var record = {
+      data: mindmapData, palette: palName, layout: "radial",
+      createdAt: existing ? JSON.parse(existing.value).createdAt : now,
+      updatedAt: now, tags: [],
+    };
+    try {
+      await window.storage.set(key, JSON.stringify(record));
+      setSaveMsg(existing ? "Updated ✓" : "Saved ✓");
+    } catch(e) { setSaveMsg("Error"); }
+    setTimeout(function() { setSaveMsg(null); }, 2000);
+  }
+
+  return (
+    <div style={{ position: "relative", width: "100%", height: "100vh" }}>
+      {/* 2. Toolbar MUST contain the Save Button */}
+      <div style={{ position: "absolute", top: 16, left: 16, display: "flex", gap: 8, zIndex: 10 }}>
+        {/* Palette Picker goes here */}
+        
+        {/* MANDATORY SAVE BUTTON */}
+        <button onClick={handleSave} style={{
+          height: 32, padding: "0 16px", border: "1px solid #ddd", borderRadius: 7,
+          background: saveMsg ? "#e8f5ee" : "#fff", cursor: "pointer",
+          fontSize: 13, fontWeight: 700, fontFamily: "system-ui, sans-serif",
+          color: saveMsg ? "#2D6A4F" : "#555",
+        }}>
+          {saveMsg || "💾 Save"}
+        </button>
+      </div>
+
+      {/* 3. SVG Canvas goes here */}
+    </div>
+  );
 }
-```
-
-And this button in the toolbar (after the palette picker):
-
-```jsx
-<button onClick={handleSave} style={{
-  height: 32, padding: "0 16px", border: "1px solid #ddd", borderRadius: 7,
-  background: saveMsg ? "#e8f5ee" : "#fff", cursor: "pointer",
-  fontSize: 13, fontWeight: 700, fontFamily: "system-ui, sans-serif",
-  color: saveMsg ? "#2D6A4F" : "#555",
-}}>
-  {saveMsg || "💾 Save"}
-</button>
 ```
 
 ### Palette System
@@ -287,8 +300,8 @@ Edit response: State change (1 sentence) → regenerate → stop.
 ## What NOT To Do
 
 - Do NOT generate connectors using center coordinates — use `edgePoint()` + `buildCurve()`
-- Do NOT omit the 💾 Save button — include `handleSave` and the button element
-- Do NOT add opacity to pill `<rect>` elements — they must be fully opaque
+- Do NOT omit the 💾 Save button — use the component skeleton above with `handleSave`
+- Do NOT use `opacity`, `rgba()`, or alpha channels to lighten pill colors — use solid hex only, force `fillOpacity={1}`
 - Do NOT respond with a plain text summary — always produce a React artifact
 - Do NOT use Mermaid.js or Excalidraw
 - Do NOT skip the palette switcher
