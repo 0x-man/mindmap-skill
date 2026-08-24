@@ -4,21 +4,40 @@ description: >
   CRITICAL — if the user asks for a mind map, concept map, knowledge map, visual summary,
   or says "map this out", "map this", "mind map this", "visualize the structure", "break this
   down visually", or "turn this into a mind map", you MUST use this skill. Stop everything
-  and read this SKILL.md immediately. The output is ALWAYS a React (.jsx) artifact with an
-  interactive radial mind map. Do NOT respond with a plain text summary or outline. Do NOT
-  use Mermaid.js. Do NOT use Excalidraw. Always produce a React mind map artifact — no exceptions.
+  and read this SKILL.md immediately. The default output is a React (.jsx) artifact with an
+  interactive radial mind map. If the user says "markmap", "markdown map", "--md", "portable",
+  or "I want to open it outside Claude", output Markmap-flavored Markdown (.md) instead.
+  Do NOT respond with a plain text summary or outline. Do NOT use Mermaid.js or Excalidraw.
 ---
 
 # Mind Map Generator
 
-Generate interactive mind maps as React (.jsx) artifacts.
+Generate interactive mind maps as React (.jsx) artifacts or portable Markmap (.md) files.
+
+## Output Modes
+
+**React (default):** Interactive artifact with pan, zoom, collapse, palette switching,
+save button, edge-anchored connectors, and hover tooltips. Best for exploring in Claude.
+
+**Markmap (on request):** Portable Markdown file that renders with markmap.js. Works in
+VS Code (Markmap extension), markmap.js.org, or any browser via `npx markmap-cli`.
+Best for sharing, embedding, and use outside Claude.
+
+**Trigger Markmap mode when the user says any of:**
+"markmap", "markdown map", "--md", "portable format", "I want to open it outside Claude",
+"export as markdown map", "make it a .md", "markmap format"
+
+If unclear, default to React.
 
 ## When You Receive a Request
 
-1. Analyze the input content — extract the central topic and 4–7 main branches
-2. Build the `mindmapData` object following the Data Structure section below
-3. Generate a React artifact that includes ALL of the Mandatory Code below
-4. Optionally read `references/mindmap-best-practices.md` for keyword compression examples
+1. Determine output mode — React (default) or Markmap (if triggered above)
+2. Analyze the input content — extract the central topic and 4–7 main branches
+3. For **React mode**: Build the `mindmapData` object and generate a React artifact
+   with ALL of the Mandatory Code below
+4. For **Markmap mode**: Generate a Markmap-flavored `.md` file following the
+   Markmap Output section below
+5. Optionally read `references/mindmap-best-practices.md` for keyword compression examples
 
 ## Content Analysis Strategy
 
@@ -270,6 +289,67 @@ function buildLayout(data) {
 
 ## ═══ END MANDATORY CODE ═══
 
+## Markmap Output Mode
+
+When the user requests Markmap format, output a `.md` file artifact (not React).
+The same content analysis rules apply — 4–7 branches, keyword compression, content
+intelligence. Only the output format changes.
+
+### Markmap Format
+
+```markdown
+---
+title: Topic Name
+markmap:
+  colorFreezeLevel: 2
+  maxWidth: 300
+---
+
+# Topic Name
+
+## 🧠 Branch One
+- Sub-item alpha
+- Sub-item beta
+  - Detail or nested point
+- ❓ *Gap: under-explored area*
+
+## ⚡ Branch Two
+- Sub-item delta
+- **Key metric: 42%** ← bold for emphasis
+- Sub-item zeta
+
+## 🔮 Branch Three
+- Sub-item eta
+- Sub-item theta
+```
+
+### Markmap Rules
+
+- `#` = central topic (one only)
+- `##` = main branches (4–7, emoji prefix)
+- `-` = sub-items (2–5 per branch)
+- `- -` = nested detail (depth 3, use sparingly)
+- `**bold**` for key metrics or emphasis
+- `*italic*` for inquiry/gap nodes
+- `❓` prefix for gaps, `⚡` prefix for contradictions
+- Keep all labels to 2–5 words — same compression rules as React mode
+- Include YAML frontmatter with `title` and `markmap` config
+
+### Markmap Content Intelligence
+
+Same rules as React mode, adapted for Markdown syntax:
+
+- **Contradictions**: `⚡ Claim conflicts with [Branch X](#)` — bold both, add note
+- **Gaps**: `❓ *Under-explored: [topic]*` — italic signals uncertainty
+- **Sources**: Add a `## 📚 Sources` branch at the end with numbered references
+- **Cross-links**: Add a note like `→ see also: [Branch X, Sub-item Y]`
+
+### When to Suggest Markmap
+
+If the user generates a React mind map and then asks to share it, export it, or use
+it outside Claude, offer: "I can also generate this as a Markmap .md file — it works
+in VS Code, any browser, and markmap.js.org. Want me to convert it?"
+
 ## Conversational Editing
 
 After first generation, users refine through conversation. Only change `mindmapData`.
@@ -287,6 +367,8 @@ Do NOT re-read references. Do NOT regenerate engine code.
 | "Change palette" | Change default palette |
 | "Save this map" | Already handled by 💾 button |
 | "Show my atlas" | Generate atlas per `references/atlas-storage.md` |
+| "Convert to markmap" | Re-output current map as Markmap .md |
+| "Convert to React" | Re-output current Markmap as React artifact |
 
 Edit response: State change (1 sentence) → regenerate → stop.
 
@@ -302,18 +384,24 @@ Edit response: State change (1 sentence) → regenerate → stop.
 - Do NOT generate connectors using center coordinates — use `edgePoint()` + `buildCurve()`
 - Do NOT omit the 💾 Save button — use the component skeleton above with `handleSave`
 - Do NOT use `opacity`, `rgba()`, or alpha channels to lighten pill colors — use solid hex only, force `fillOpacity={1}`
-- Do NOT respond with a plain text summary — always produce a React artifact
+- Do NOT respond with a plain text summary — always produce either a React artifact or a Markmap .md file
 - Do NOT use Mermaid.js or Excalidraw
-- Do NOT skip the palette switcher
+- Do NOT skip the palette switcher (React mode)
+- Do NOT mix modes — React is an artifact, Markmap is a .md file. Never put Markmap syntax in a React artifact or vice versa
 
 ## Output Pattern
 
-**First generation:**
+**React mode (default):**
 1. Brief explanation of extracted structure (1–2 sentences)
 2. React artifact with mindmapData + all mandatory code above
-3. Offer to adjust
+3. Offer: "Want me to adjust the structure, or export as a portable Markmap .md?"
 
-**Edits:**
+**Markmap mode:**
+1. Brief explanation of extracted structure (1–2 sentences)
+2. Markmap .md file artifact
+3. Note: "Open this in VS Code (Markmap extension) or paste at markmap.js.org to view interactively."
+
+**Edits (either mode):**
 1. State the change (1 sentence)
 2. Regenerate with updated data only
 3. Stop.
