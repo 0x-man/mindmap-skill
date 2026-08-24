@@ -1,4 +1,4 @@
-# 🧠🗺️ Mind Map Generator — Claude Skill
+# 🧠 Mind Map Generator — Claude Skill
 
 A Claude skill that generates interactive, visually polished mind maps from any content — text, documents, conversations, topics, brainstorms, or ideas.
 
@@ -17,6 +17,7 @@ Feed it any content and it produces a **React artifact** with:
 - **Conversational editing**: add, remove, move, rename, merge, split nodes through natural language — no full regeneration needed
 - **Adaptive layout**: auto-selects radial, semi-circular, top-down tree, or left-to-right flow based on content shape — or override manually
 - **Knowledge Atlas**: save maps across sessions, auto-detect shared concepts between them, and explore your growing knowledge graph as a force-directed network
+- **Dual output**: React artifact (default) for interactive exploration in Claude, or Markmap `.md` for portable use in VS Code, browsers, and markmap.js.org
 
 ## Installation
 
@@ -57,6 +58,12 @@ Then build your knowledge graph over time:
 - *"Open my Deep Work map"* — reload a saved map
 - *"What connects to my crypto map?"* — discover cross-map links
 
+Or export as a portable Markmap file:
+
+- *"Mind map this article --md"* — generates Markmap directly
+- *"Convert to markmap"* — converts an existing React map
+- *"Make it portable"* — same as above
+
 ## Features in Detail
 
 | Feature | What it does |
@@ -75,6 +82,7 @@ Then build your knowledge graph over time:
 | Conversational editing | "Add X under Y", "move Z", "merge these two" — surgical updates without regenerating from scratch |
 | Adaptive layout | Auto-selects radial, semi-circular, tree, or flow layout based on content. "Make it a tree" to override. |
 | Knowledge Atlas | 💾 Save button is built into every map. "Show my atlas" renders a force-directed network of all your maps with auto-detected concept links. |
+| Markmap output | Say "markmap" or "--md" to get portable Markdown that works in VS Code, markmap.js.org, and any browser via npx. |
 
 ## Token Usage Estimates
 
