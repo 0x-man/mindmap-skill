@@ -108,6 +108,37 @@ Mind map generation is a single-turn operation. Here's what to expect:
 - Follow-ups are significantly cheaper than the first generation
 - Asking for structural changes ("add a branch", "merge these two") regenerates the full artifact (~5K output); cosmetic changes ("change palette") are lighter
 
+## Troubleshooting
+
+Claude occasionally drops specific rendering features (save button, edge anchoring, opaque pills) when generating mind maps from scratch. This is a known limitation of LLM code generation — the content analysis and structure extraction work reliably, but visual implementation details can vary between generations.
+
+**Quick fix using inline editing (works every time):**
+
+Claude now supports inline artifact editing. If a feature is missing from your generated mind map:
+
+1. Click the artifact to select it
+2. Highlight the area where the feature should be (e.g., the toolbar region)
+3. Type your instruction directly, for example:
+   - *"Add a 💾 Save button here that saves to window.storage"*
+   - *"Make all pill backgrounds fully opaque with fillOpacity={1}"*
+   - *"Fix connectors to start at pill edges instead of centers"*
+
+Claude will edit the existing artifact code — which it does reliably, since it's modifying code rather than generating from scratch.
+
+**Features that work reliably on first generation:**
+- Radial layout with semantic gravity
+- 4–7 branch structure with keyword compression
+- Content intelligence (contradictions, gaps, cross-links)
+- Palette system and switching
+- Pan, zoom, collapse/expand
+- Hover tooltips
+
+**Features that may need an inline edit prompt:**
+- 💾 Save button
+- Edge-anchored connectors (vs center-to-center)
+- Fully opaque pills (vs semi-transparent)
+- Fullscreen toggle
+
 ## License
 
 MIT
