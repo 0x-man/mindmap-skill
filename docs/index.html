@@ -125,10 +125,10 @@
   <div class="container">
     <div class="hero-badge">🧠 Claude Skill <span>· Open Source</span></div>
     <h1>Turn anything into<br>an <em>intelligent</em> mind map.<br>Then connect them all.</h1>
-    <p class="hero-sub">A Claude skill that transforms documents, articles, brainstorms, and ideas into interactive mind maps — then connects them into a personal knowledge atlas. Contradiction detection, gap analysis, source attribution, 7 export formats, and adaptive layouts.</p>
+    <p class="hero-sub">A Claude skill that transforms documents, articles, brainstorms, and ideas into interactive mind maps — then connects them into a personal knowledge atlas. Contradiction detection, gap analysis, adaptive layouts, portable Markmap export, and a Claude Code plugin.</p>
     <div class="hero-actions">
-      <a href="https://github.com/YOUR_USERNAME/mindmap-skill/releases/latest" class="btn btn-primary">↓ Download .skill file</a>
-      <a href="https://github.com/YOUR_USERNAME/mindmap-skill" class="btn btn-ghost">View on GitHub →</a>
+      <a href="https://github.com/0x-man/mindmap-skill/releases/latest" class="btn btn-primary">↓ Download .skill file</a>
+      <a href="https://github.com/0x-man/mindmap-skill" class="btn btn-ghost">View on GitHub →</a>
     </div>
   </div>
 </section>
@@ -168,6 +168,9 @@
       <div class="feature-card reveal"><span class="feature-icon">🔀</span><h3>Adaptive Layout</h3><p>Auto-selects radial, semi-circular, tree, or flow based on content shape. Processes get flow, taxonomies get tree. Say "make it a tree" to override.</p></div>
       <div class="feature-card reveal"><span class="feature-icon">💾</span><h3>Built-in Save</h3><p>Every map includes a 💾 button. One click to persist across sessions. Come back tomorrow and it's still there.</p></div>
       <div class="feature-card reveal"><span class="feature-icon">🌐</span><h3>Knowledge Atlas</h3><p>"Show my atlas" renders all your saved maps as a force-directed network. Shared concepts between maps are detected automatically and shown as connections.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">📄</span><h3>Markmap Output</h3><p>Say "markmap" or "--md" to get portable Markdown that renders in VS Code, any browser, or markmap.js.org. React by default, Markmap when you need to share.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">⚖️</span><h3>Deep Mode</h3><p>Say "--deep" for complex documents. Generates three competing structures, scores them on six dimensions, and synthesizes the strongest one.</p></div>
+      <div class="feature-card reveal"><span class="feature-icon">⌨️</span><h3>Claude Code Plugin</h3><p>Also available as a Claude Code plugin. Mind map codebases, READMEs, and docs directly from your terminal, VS Code, or JetBrains.</p></div>
     </div>
   </div>
 </section>
@@ -327,14 +330,19 @@
     <div class="section-label reveal">Install</div>
     <h2 class="reveal">30 seconds to your first map</h2>
     <div class="install-steps">
-      <div class="step-card reveal"><h3>Download</h3><p>Grab <code>mindmap.skill</code> from the <a href="https://github.com/YOUR_USERNAME/mindmap-skill/releases/latest" style="color:var(--accent)">latest release</a>.</p></div>
+      <div class="step-card reveal"><h3>Download</h3><p>Grab <code>mindmap.skill</code> from the <a href="https://github.com/0x-man/mindmap-skill/releases/latest" style="color:var(--accent)">latest release</a>.</p></div>
       <div class="step-card reveal"><h3>Install</h3><p>Drag it into any Claude chat, or go to <strong>Settings → Profile → Custom Skills</strong>.</p></div>
       <div class="step-card reveal"><h3>Use</h3><p>Say <em>"mind map this"</em> with any content — pasted text, a PDF, or just a topic.</p></div>
+    </div>
+    <p style="margin-top:32px;color:var(--text-muted);font-size:15px;text-align:center">Using Claude Code instead? Install the plugin:</p>
+    <div style="max-width:520px;margin:16px auto 0;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.9;color:var(--text)">
+      <span style="color:var(--text-muted)">$</span> /plugin marketplace add 0x-man/mindmap-skill<br>
+      <span style="color:var(--text-muted)">$</span> /plugin install mindmap@mindmap-marketplace
     </div>
   </div>
 </section>
 
-<footer><div class="container"><p>Built with Claude · <a href="https://github.com/YOUR_USERNAME/mindmap-skill">GitHub</a> · MIT License</p></div></footer>
+<footer><div class="container"><p>Built with Claude · <a href="https://github.com/0x-man/mindmap-skill">GitHub</a> · MIT License</p></div></footer>
 
 <!-- ════════════ INTERACTIVE MIND MAP ENGINE (vanilla JS) ════════════ -->
 <script>
