@@ -1,0 +1,20 @@
+{
+  "name": "mindmap-marketplace",
+  "owner": {
+    "name": "0x-man"
+  },
+  "metadata": {
+    "description": "Mind Map Generator — interactive knowledge visualization for Claude Code",
+    "version": "1.2.0"
+  },
+  "plugins": [
+    {
+      "name": "mindmap",
+      "source": "./",
+      "description": "Generate interactive mind maps from any content — with contradiction detection, gap analysis, source attribution, adaptive layouts, and a persistent knowledge atlas. Outputs interactive React artifacts or portable Markmap files.",
+      "category": "productivity",
+      "tags": ["mindmap", "visualization", "knowledge-management", "markmap"],
+      "strict": false
+    }
+  ]
+}
