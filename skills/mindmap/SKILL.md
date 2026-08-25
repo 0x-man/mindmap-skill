@@ -398,12 +398,17 @@ Edit response: State change (1 sentence) → regenerate → stop.
 **React mode (default):**
 1. Brief explanation of extracted structure (1–2 sentences)
 2. React artifact with mindmapData + all mandatory code above
-3. Offer: "Want me to adjust the structure, or export as a portable Markmap .md?"
+3. Always end with this exact offer, so users discover the portable option:
+   "💾 The **Save** button (in the toolbar) stores this to your atlas. Want a **portable
+   version** you can open outside Claude? Just say *'convert to markmap'* and I'll generate
+   a Markdown file that works in VS Code, any browser, or markmap.js.org."
 
 **Markmap mode:**
 1. Brief explanation of extracted structure (1–2 sentences)
 2. Markmap .md file artifact
-3. Note: "Open this in VS Code (Markmap extension) or paste at markmap.js.org to view interactively."
+3. Note: "Open this in VS Code (Markmap extension), paste at markmap.js.org, or run
+   `npx markmap-cli yourfile.md` to view interactively. Want the interactive React
+   version instead? Say *'convert to React'*."
 
 **Edits (either mode):**
 1. State the change (1 sentence)
