@@ -32,12 +32,15 @@ If unclear, default to React.
 ## When You Receive a Request
 
 1. Determine output mode — React (default) or Markmap (if triggered above)
-2. Analyze the input content — extract the central topic and 4–7 main branches
-3. For **React mode**: Build the `mindmapData` object and generate a React artifact
+2. Check for **deep mode**: if the user says "--deep", "deep mode", "think harder", or
+   "best possible structure", read `references/judge-panel.md` and follow that workflow.
+   For rich documents (3000+ words with competing themes), you may proactively suggest it.
+3. Analyze the input content — extract the central topic and 4–7 main branches
+4. For **React mode**: Build the `mindmapData` object and generate a React artifact
    with ALL of the Mandatory Code below
-4. For **Markmap mode**: Generate a Markmap-flavored `.md` file following the
+5. For **Markmap mode**: Generate a Markmap-flavored `.md` file following the
    Markmap Output section below
-5. Optionally read `references/mindmap-best-practices.md` for keyword compression examples
+6. Optionally read `references/mindmap-best-practices.md` for keyword compression examples
 
 ## Content Analysis Strategy
 
@@ -369,6 +372,7 @@ Do NOT re-read references. Do NOT regenerate engine code.
 | "Show my atlas" | Generate atlas per `references/atlas-storage.md` |
 | "Convert to markmap" | Re-output current map as Markmap .md |
 | "Convert to React" | Re-output current Markmap as React artifact |
+| "--deep" / "think harder" | Run judge panel per `references/judge-panel.md` |
 
 Edit response: State change (1 sentence) → regenerate → stop.
 
