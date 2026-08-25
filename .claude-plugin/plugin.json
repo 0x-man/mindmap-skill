@@ -1,0 +1,20 @@
+{
+  "name": "mindmap",
+  "version": "1.2.0",
+  "description": "Generate interactive mind maps from any content — with contradiction detection, gap analysis, source attribution, adaptive layouts, and a persistent knowledge atlas. Outputs interactive React artifacts or portable Markmap files.",
+  "author": {
+    "name": "0x-man"
+  },
+  "homepage": "https://github.com/0x-man/mindmap-skill",
+  "repository": "https://github.com/0x-man/mindmap-skill",
+  "license": "MIT",
+  "keywords": [
+    "mindmap",
+    "mind-map",
+    "concept-map",
+    "visualization",
+    "knowledge-management",
+    "markmap",
+    "diagram"
+  ]
+}
