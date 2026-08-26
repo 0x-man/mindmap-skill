@@ -2,6 +2,8 @@
 
 A Claude skill that generates interactive, visually polished mind maps from any content — text, documents, conversations, topics, brainstorms, or ideas.
 
+[**Live demo →**](https://0x-man.github.io/mindmap-skill/) · [Download `.skill`](../../releases/latest) · MIT
+
 ## What It Does
 
 Feed it any content and it produces a **React artifact** with:
@@ -18,29 +20,45 @@ Feed it any content and it produces a **React artifact** with:
 - **Adaptive layout**: auto-selects radial, semi-circular, top-down tree, or left-to-right flow based on content shape — or override manually
 - **Knowledge Atlas**: save maps across sessions, auto-detect shared concepts between them, and explore your growing knowledge graph as a force-directed network
 - **Dual output**: React artifact (default) for interactive exploration in Claude, or Markmap `.md` for portable use in VS Code, browsers, and markmap.js.org
+- **Deep mode**: say `--deep` on complex documents — generates three competing structures, scores them on six dimensions, and synthesizes the strongest one
 
 ## Installation
 
-### Option A: Install the `.skill` file (easiest)
+### claude.ai — install the `.skill` file
 1. Download `mindmap.skill` from the [Releases](../../releases) page
 2. Drag it into any Claude chat, or go to **Settings → Profile → Custom Skills** and upload it
 
-### Option B: Manual install
-1. Clone this repo
-2. Copy the `mindmap/` folder to your Claude skills directory
+### Claude Code — install the plugin
+```
+/plugin marketplace add 0x-man/mindmap-skill
+/plugin install mindmap@mindmap-marketplace
+```
+
+### Manual install
+Clone this repo and copy `skills/mindmap/` into your Claude skills directory.
 
 ## File Structure
 
 ```
-mindmap/
-├── SKILL.md                              # Core instructions + mandatory code (319 lines)
+.claude-plugin/
+├── plugin.json                           # Claude Code plugin manifest
+└── marketplace.json                      # Plugin marketplace catalog
+
+skills/mindmap/                           # Single source of truth
+├── SKILL.md                              # Core instructions + mandatory code
 └── references/
     ├── template.md                       # Complete working React template
     ├── mindmap-best-practices.md         # Cognitive science, palettes, keyword compression
-    ├── export-patterns.md               # SVG/PNG/PDF/Mermaid/Markdown/Embed export code
-    ├── layout-engine.md                 # 4 layout algorithms (radial, semicircle, tree, flow)
-    └── atlas-storage.md                 # Persistent storage, atlas viewer, auto-linking
+    ├── export-patterns.md                # SVG/PNG/PDF/Mermaid/Markdown/Embed export code
+    ├── layout-engine.md                  # 4 layout algorithms (radial, semicircle, tree, flow)
+    ├── atlas-storage.md                  # Persistent storage, atlas viewer, auto-linking
+    └── judge-panel.md                    # Multi-agent deep structure mode
+
+docs/                                     # GitHub Pages demo site
 ```
+
+Both distribution channels read from `skills/mindmap/`. The `.skill` file attached to
+each release is built from this same folder — edit once, ship everywhere.
 
 ## Usage
 
@@ -64,6 +82,11 @@ Or export as a portable Markmap file:
 - *"Convert to markmap"* — converts an existing React map
 - *"Make it portable"* — same as above
 
+For dense documents where structure really matters:
+
+- *"Mind map this paper --deep"* — runs the judge panel for a better structure
+- *"Think harder about this one"* — same as above
+
 ## Features in Detail
 
 | Feature | What it does |
@@ -83,6 +106,7 @@ Or export as a portable Markmap file:
 | Adaptive layout | Auto-selects radial, semi-circular, tree, or flow layout based on content. "Make it a tree" to override. |
 | Knowledge Atlas | 💾 Save button is built into every map. "Show my atlas" renders a force-directed network of all your maps with auto-detected concept links. |
 | Markmap output | Say "markmap" or "--md" to get portable Markdown that works in VS Code, markmap.js.org, and any browser via npx. |
+| Deep mode | Say "--deep" for dense documents. Three proposers, six-dimension scoring, one synthesizer. Slower and pricier, noticeably better structure. |
 
 ## Token Usage Estimates
 
