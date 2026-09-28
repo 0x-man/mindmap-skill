@@ -18,7 +18,8 @@ Feed it any content and it produces a **React artifact** with:
 - **7 export formats**: SVG, PNG, PDF, Markdown, Mermaid, embeddable HTML
 - **Conversational editing**: add, remove, move, rename, merge, split nodes through natural language — no full regeneration needed
 - **Adaptive layout**: auto-selects radial, semi-circular, top-down tree, or left-to-right flow based on content shape — or override manually
-- **Knowledge Atlas**: save maps across sessions, auto-detect shared concepts between them, and explore your growing knowledge graph as a force-directed network
+- **Knowledge Atlas**: one private published page that stores every map in a database, links maps by shared concepts, and opens any map at `#slug` — Claude writes maps into it directly, so no rendering code is generated
+- **Markmap download**: every map has a **⬇ .md** button that exports a portable Markmap file, built in code with no extra model call
 - **Dual output**: React artifact (default) for interactive exploration in Claude, or Markmap `.md` for portable use in VS Code, browsers, and markmap.js.org
 - **Deep mode**: say `--deep` on complex documents — generates three competing structures, scores them on six dimensions, and synthesizes the strongest one
 
@@ -51,7 +52,8 @@ skills/mindmap/                           # Single source of truth
     ├── mindmap-best-practices.md         # Cognitive science, palettes, keyword compression
     ├── export-patterns.md                # SVG/PNG/PDF/Mermaid/Markdown/Embed export code
     ├── layout-engine.md                  # 4 layout algorithms (radial, semicircle, tree, flow)
-    ├── atlas-storage.md                  # Persistent storage, atlas viewer, auto-linking
+    ├── atlas.html                        # Published Knowledge Atlas page (db-backed)
+    ├── atlas-storage.md                  # Chat fallback: window.storage save and atlas
     └── judge-panel.md                    # Multi-agent deep structure mode
 
 docs/                                     # GitHub Pages demo site
@@ -104,7 +106,8 @@ For dense documents where structure really matters:
 | Edge anchoring | Connectors start/end at pill edges, not node centers — no text overlap |
 | Conversational editing | "Add X under Y", "move Z", "merge these two" — surgical updates without regenerating from scratch |
 | Adaptive layout | Auto-selects radial, semi-circular, tree, or flow layout based on content. "Make it a tree" to override. |
-| Knowledge Atlas | 💾 Save button is built into every map. "Show my atlas" renders a force-directed network of all your maps with auto-detected concept links. |
+| Knowledge Atlas | Where the session can publish artifacts, Claude saves each map as data in a private atlas page (owner-only access rule) and links you straight to it. In claude.ai chat, the 💾 button saves to browser-side storage instead. |
+| ⬇ .md | One-click Markmap export from the atlas or any chat map. Opens in VS Code, markmap.js.org, or `npx markmap-cli`. |
 | Markmap output | Say "markmap" or "--md" to get portable Markdown that works in VS Code, markmap.js.org, and any browser via npx. |
 | Deep mode | Say "--deep" for dense documents. Three proposers, six-dimension scoring, one synthesizer. Slower and pricier, noticeably better structure. |
 
